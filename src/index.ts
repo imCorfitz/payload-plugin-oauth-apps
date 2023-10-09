@@ -13,6 +13,22 @@ export const oAuthApps =
   (config: Config): Config => {
     return {
       ...config,
+      admin: {
+        ...config.admin,
+        webpack: webpackConfig => {
+          const conf = config.admin?.webpack?.(webpackConfig) || webpackConfig
+          return {
+            ...conf,
+            resolve: {
+              ...conf.resolve,
+              alias: {
+                ...conf.resolve?.alias,
+                jsonwebtoken: false,
+              },
+            },
+          }
+        },
+      },
       collections: [
         ...(config.collections || []).map(collection => {
           const { slug } = collection
