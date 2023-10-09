@@ -89,6 +89,13 @@ export const refreshToken: (endpointConfig: EndpointConfig) => Endpoint[] = endp
             return
           }
 
+          const sessionAppId = typeof session.app === 'string' ? session.app : session.app.id
+
+          if (sessionAppId !== client.id) {
+            res.status(401).send('Unauthorized: Invalid client credentials')
+            return
+          }
+
           const { expiresIn, accessToken } = generateAccessToken({
             user,
             payload,
