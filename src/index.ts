@@ -1,12 +1,14 @@
 import type { Config } from 'payload/config'
-import { OAuthManager } from './fields/oauth-manager'
 import { OAuthApps } from './collections/OAuthApps'
 import type { EndpointConfig, PluginConfig } from './types'
 import { OAuthGroup } from './fields/oauth-group'
 import { oAuthEndpoints } from './endpoints/oauth'
+import oAuthCorsHeaders from './express/middleware/cors'
+import oAuthCsrf from './express/middleware/csrf'
+
 export { oAuthManager } from './fields/oauth-manager'
 
-export const oAuthStrategy =
+export const oAuthApps =
   (pluginConfig: PluginConfig) =>
   (config: Config): Config => {
     return {
@@ -41,7 +43,13 @@ export const oAuthStrategy =
         }),
         OAuthApps,
       ],
+
+      /**
+       * Add OAuth Apps CORS headers to the express app
+       */
+      express: {
+        preMiddleware: [oAuthCsrf],
+        postMiddleware: [oAuthCorsHeaders],
+      },
     }
   }
-
-export default oAuthStrategy
