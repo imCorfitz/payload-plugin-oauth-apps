@@ -4,52 +4,20 @@ import { OAuthApps } from './collections/OAuthApps'
 import type { EndpointConfig, PluginConfig } from './types'
 import { OAuthGroup } from './fields/oauth-group'
 import { oAuthEndpoints } from './endpoints/oauth'
+export { oAuthManager } from './fields/oauth-manager'
 
 export const oAuthStrategy =
   (pluginConfig: PluginConfig) =>
   (config: Config): Config => {
     return {
       ...config,
-      // admin: {
-      //   ...config.admin,
-      //   webpack: webpackConfig => {
-      //     const conf = config.admin?.webpack?.(webpackConfig) || webpackConfig
-      //     return {
-      //       ...conf,
-      //       resolve: {
-      //         ...conf.resolve,
-      //         alias: {
-      //           ...conf.resolve?.alias,
-      //           jsonwebtoken: false,
-      //         },
-      //       },
-      //     }
-      //   },
-      // },
       collections: [
         ...(config.collections || []).map(collection => {
           const { slug } = collection
 
-          const isAdminCollection =
-            pluginConfig.adminCollection && pluginConfig.adminCollection === slug
-
-          /**
-           * If the adminCollection is set, add the OAuthManager field to that collection
-           */
-          if (isAdminCollection) {
-            collection.fields = [...collection.fields, OAuthManager]
-          }
-
           const isUserCollection = pluginConfig.userCollections.includes(slug)
 
           if (isUserCollection) {
-            /**
-             * If the adminCollection is not set, add the OAuthManager field to the userCollection
-             */
-            if (!pluginConfig.adminCollection) {
-              collection.fields = [...collection.fields, OAuthManager]
-            }
-
             /**
              * Update users collection to manage their sessions
              */
