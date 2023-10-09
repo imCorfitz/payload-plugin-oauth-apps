@@ -14,7 +14,7 @@ import { oAuthApps } from "payload-plugin-oauth-apps";
 export default buildConfig({
   // ... Payload Config
   plugins: [
-    // ... other plguins
+    // ... other plugins
     oAuthApps({
       userCollections: [Users.slug],
     }),
