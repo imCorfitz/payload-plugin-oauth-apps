@@ -9,7 +9,7 @@ export const OAuthGroup: (pluginConfig: PluginConfig) => GroupField = pluginConf
     label: 'OAuth',
     fields: [
       {
-        name: '__authCode',
+        name: '_authCode',
         type: 'text',
         label: 'Auth Code',
         hidden: true,
@@ -24,9 +24,9 @@ export const OAuthGroup: (pluginConfig: PluginConfig) => GroupField = pluginConf
         name: 'sessions',
         label: 'Sessions',
         access: {
-          read: pluginConfig.oAuthGroupAccessControl?.read || isSelfFieldLevel,
-          create: () => false,
-          update: pluginConfig.oAuthGroupAccessControl?.update || isSelfFieldLevel,
+          read: pluginConfig.access?.sessions?.read || isSelfFieldLevel,
+          create: pluginConfig.access?.sessions?.create || (() => false),
+          update: pluginConfig.access?.sessions?.update || isSelfFieldLevel,
         },
         fields: [
           {

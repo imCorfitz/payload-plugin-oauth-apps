@@ -3,22 +3,22 @@ import type { Endpoint } from 'payload/config'
 import type { EndpointConfig, EndpointHandler } from '../../types'
 // Handlers
 import credentials from '../handlers/authorize/credentials'
-import passwordless from '../handlers/authorize/passwordless'
+import otp from '../handlers/authorize/otp'
 import magiclink from '../handlers/authorize/magiclink'
 
 const handlers = {
   credentials,
-  passwordless,
+  otp,
   magiclink,
 }
 
 export const authorize: (endpointConfig: EndpointConfig) => Endpoint[] = endpointConfig => {
-  const authMethod = endpointConfig.authorizationMethod || 'credentials'
+  const authMethod = endpointConfig.authorization?.method || 'credentials'
 
   let handler: EndpointHandler | undefined
 
   if (authMethod === 'custom') {
-    handler = endpointConfig.customAuthorizationHandler
+    handler = endpointConfig.authorization?.customHandler
   } else {
     handler = handlers[authMethod]
   }

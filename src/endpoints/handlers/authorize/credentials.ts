@@ -51,7 +51,7 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
     const refreshData = await generateRefreshToken({
       app: client.id,
       user: user.user as GenericUser,
-      expiration: config.refreshTokenExpiration || 60 * 60 * 24 * 30,
+      expiration: config.token?.refreshTokenExpiration || 60 * 60 * 24 * 30,
       payload,
       collection: config.endpointCollection,
       userAgent,
@@ -85,7 +85,7 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
     res.cookie(`${payload.config.cookiePrefix}-refresh`, refreshData.refreshToken, {
       path: '/',
       httpOnly: true,
-      expires: getCookieExpiration(config.refreshTokenExpiration),
+      expires: getCookieExpiration(config.token?.refreshTokenExpiration || 60 * 60 * 24 * 30),
       secure: collectionAuthConfig.cookies?.secure,
       sameSite: collectionAuthConfig.cookies?.sameSite,
       domain: collectionAuthConfig.cookies?.domain || undefined,

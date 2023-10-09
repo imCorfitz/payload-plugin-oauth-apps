@@ -1,40 +1,40 @@
 import type { PayloadHandler } from 'payload/config'
 import type { CollectionConfig } from 'payload/dist/collections/config/types'
-import type { FieldAccess } from 'payload/types'
+import type { FieldAccess, PayloadRequest } from 'payload/types'
 
 export interface PluginConfig {
   userCollections: string[]
-  adminCollection?: string
-  oAuthGroupAccessControl?: {
-    read?: FieldAccess<
-      {
-        id: string
-      },
-      unknown
-    >
-    create?: FieldAccess<
-      {
-        id: string
-      },
-      unknown
-    >
-    update?: FieldAccess<
-      {
-        id: string
-      },
-      unknown
-    >
+  access?: {
+    sessions?: {
+      read?: FieldAccess<{ id: string }, unknown>
+      create?: FieldAccess<{ id: string }, unknown>
+      update?: FieldAccess<{ id: string }, unknown>
+    }
   }
-  authorizationMethod?: 'credentials' | 'passwordless' | 'magiclink' | 'custom'
-  customAuthorizationHandler?: EndpointHandler
-  refreshTokenExpiration?: number
+  authorization?: {
+    method?: 'credentials' | 'otp' | 'magiclink' | 'custom'
+    customHandler?: EndpointHandler
+    generateEmailHTML?: (args?: {
+      req?: PayloadRequest
+      token?: string
+      user?: unknown
+    }) => string | Promise<string>
+    generateEmailSubject?: (args?: {
+      req?: PayloadRequest
+      token?: string
+      user?: unknown
+    }) => string | Promise<string>
+  }
+  token?: {
+    refreshTokenExpiration?: number
+  }
 }
 
 export interface GenericUser {
   id: string
   email: string
   oAuth: {
-    __authCode?: string
+    _authCode?: string
     sessions?: {
       app: string | { id: string }
       userAgent?: string
