@@ -14,6 +14,8 @@ export interface PluginConfig {
   authorization?: {
     method?: 'credentials' | 'otp' | 'magiclink' | 'custom'
     customHandler?: EndpointHandler
+    otpExpiration?: number
+    generateOTP?: (args?: { req?: PayloadRequest; user?: unknown }) => string | Promise<string>
     generateEmailHTML?: (args?: {
       req?: PayloadRequest
       token?: string
@@ -25,7 +27,13 @@ export interface PluginConfig {
       user?: unknown
     }) => string | Promise<string>
   }
-  token?: {
+  sessions?: {
+    limit?: number
+    ipinfoApiKey?: string
+    fetchLocationInfo?: (args?: {
+      req?: PayloadRequest
+      ip?: string
+    }) => Record<string, unknown> | Promise<Record<string, unknown>>
     refreshTokenExpiration?: number
   }
 }
@@ -34,7 +42,7 @@ export interface GenericUser {
   id: string
   email: string
   oAuth: {
-    _authCode?: string
+    _otp?: string
     sessions?: {
       app: string | { id: string }
       userAgent?: string
@@ -55,6 +63,7 @@ export interface OAuthApp {
   description: string
   homepageUrl: string
   callbackUrl: string
+  enableCookies: boolean
   credentials?: {
     clientId?: string
     clientSecret?: string

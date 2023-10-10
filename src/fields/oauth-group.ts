@@ -9,10 +9,11 @@ export const OAuthGroup: (pluginConfig: PluginConfig) => GroupField = pluginConf
     label: 'OAuth',
     fields: [
       {
-        name: '_authCode',
+        name: '_otp',
         type: 'text',
         label: 'Auth Code',
         hidden: true,
+        index: false,
         access: {
           read: () => false,
           create: () => false,
@@ -89,14 +90,14 @@ export const OAuthGroup: (pluginConfig: PluginConfig) => GroupField = pluginConf
               readOnly: true,
             },
           },
-          // {
-          //   name: 'location',
-          //   type: 'text',
-          //   label: 'Location',
-          //   admin: {
-          //     // readOnly: true,
-          //   },
-          // },
+          {
+            name: 'location',
+            type: 'json',
+            label: 'Location',
+            admin: {
+              readOnly: true,
+            },
+          },
         ],
       },
     ],

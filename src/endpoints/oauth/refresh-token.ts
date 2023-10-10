@@ -6,7 +6,7 @@ import generateAccessToken from '../../token/generate-access-token'
 import type { EndpointConfig, MaybeUser } from '../../types'
 import verifyClientCredentials from '../../utils/verify-client-credentials'
 
-export const refreshToken: (endpointConfig: EndpointConfig) => Endpoint[] = endpointConfig => {
+export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
   return [
     {
       path: '/refresh-token',
@@ -72,7 +72,7 @@ export const refreshToken: (endpointConfig: EndpointConfig) => Endpoint[] = endp
           }
 
           const user: MaybeUser = await payload.findByID({
-            collection: endpointConfig.endpointCollection.slug,
+            collection: config.endpointCollection.slug,
             id: userId,
             depth: 1,
           })
@@ -99,21 +99,23 @@ export const refreshToken: (endpointConfig: EndpointConfig) => Endpoint[] = endp
           const { expiresIn, accessToken } = generateAccessToken({
             user,
             payload,
-            collection: endpointConfig.endpointCollection,
+            collection: config.endpointCollection,
             sessionId,
           })
 
-          const collectionAuthConfig = endpointConfig.endpointCollection.auth as IncomingAuthType
+          const collectionAuthConfig = config.endpointCollection.auth as IncomingAuthType
 
-          // Set cookie
-          res.cookie(`${payload.config.cookiePrefix}-token`, accessToken, {
-            path: '/',
-            httpOnly: true,
-            expires: getCookieExpiration(collectionAuthConfig.tokenExpiration || 60 * 60),
-            secure: collectionAuthConfig.cookies?.secure,
-            sameSite: collectionAuthConfig.cookies?.sameSite,
-            domain: collectionAuthConfig.cookies?.domain || undefined,
-          })
+          if (client.enableCookies) {
+            // Set cookie
+            res.cookie(`${payload.config.cookiePrefix}-token`, accessToken, {
+              path: '/',
+              httpOnly: true,
+              expires: getCookieExpiration(collectionAuthConfig.tokenExpiration || 60 * 60),
+              secure: collectionAuthConfig.cookies?.secure,
+              sameSite: collectionAuthConfig.cookies?.sameSite,
+              domain: collectionAuthConfig.cookies?.domain || undefined,
+            })
+          }
 
           res.send({
             accessToken,

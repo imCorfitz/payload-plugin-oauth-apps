@@ -79,6 +79,25 @@ export const OAuthApps: CollectionConfig = {
       label: 'Application Callback URL',
       type: 'text',
       required: true,
+      admin: {
+        description:
+          'When using magiclink, this is the URL that the user will be redirected to after they have authenticated. The callback URL will receive a query parameter called `token` which can be used in exchange for an access and refresh token.',
+      },
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          type: 'checkbox',
+          name: 'enableCookies',
+          label: 'Enable Cookies',
+          defaultValue: false,
+          admin: {
+            description:
+              'This will create responsoe cookies when the user authenticates as well as add the hostname to the list of allowed origins for CSRF.',
+          },
+        },
+      ],
     },
     {
       type: 'group',
