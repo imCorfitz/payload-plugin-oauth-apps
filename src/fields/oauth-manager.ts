@@ -1,4 +1,5 @@
 import type { CheckboxField } from 'payload/types'
+
 import deepMerge from '../utils/deepmerge'
 
 export const oAuthManager: (

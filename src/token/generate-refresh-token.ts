@@ -1,6 +1,7 @@
-import type { PayloadRequest } from 'payload/types'
 import type { IPinfo } from 'node-ipinfo'
 import IPinfoWrapperClass from 'node-ipinfo'
+import type { PayloadRequest } from 'payload/types'
+
 import type { EndpointConfig, GenericUser, OAuthApp } from '../types'
 
 interface RefreshTokenProps {

@@ -1,4 +1,5 @@
 import type { PayloadHandler } from 'payload/config'
+
 import type { EndpointConfig, GenericUser } from '../../../types'
 import generateAuthCode from '../../../utils/generate-auth-code'
 import verifyClientCredentials from '../../../utils/verify-client-credentials'

@@ -1,9 +1,9 @@
 import type { Endpoint } from 'payload/config'
 import type { IncomingAuthType } from 'payload/dist/auth'
 import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
+
 import generateAccessToken from '../../token/generate-access-token'
 import generateRefreshToken from '../../token/generate-refresh-token'
-// Types
 import type { EndpointConfig, GenericUser } from '../../types'
 import verifyClientCredentials from '../../utils/verify-client-credentials'
 

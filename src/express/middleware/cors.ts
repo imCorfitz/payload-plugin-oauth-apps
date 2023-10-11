@@ -1,5 +1,6 @@
-import type { Response, NextFunction } from 'express'
+import type { NextFunction, Response } from 'express'
 import type { PayloadRequest } from 'payload/types'
+
 import type { OAuthApp } from '../../types'
 
 export default async function oAuthCorsHeaders(

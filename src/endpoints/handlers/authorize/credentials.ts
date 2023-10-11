@@ -1,11 +1,12 @@
 import type { PayloadHandler } from 'payload/config'
-import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
 import isLocked from 'payload/dist/auth/isLocked'
-import sanitizeInternalFields from 'payload/dist/utilities/sanitizeInternalFields'
-import { AuthenticationError, LockedAuth } from 'payload/dist/errors'
+import unlock from 'payload/dist/auth/operations/unlock'
 import { authenticateLocalStrategy } from 'payload/dist/auth/strategies/local/authenticate'
 import { incrementLoginAttempts } from 'payload/dist/auth/strategies/local/incrementLoginAttempts'
-import unlock from 'payload/dist/auth/operations/unlock'
+import { AuthenticationError, LockedAuth } from 'payload/dist/errors'
+import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
+import sanitizeInternalFields from 'payload/dist/utilities/sanitizeInternalFields'
+
 import generateAccessToken from '../../../token/generate-access-token'
 import generateRefreshToken from '../../../token/generate-refresh-token'
 import type { EndpointConfig } from '../../../types'
@@ -71,9 +72,7 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
 
   if (maxLoginAttemptsEnabled) {
     await unlock({
-      collection: {
-        config: collection.config,
-      },
+      collection,
       data: {
         email,
       },

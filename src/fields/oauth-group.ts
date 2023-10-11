@@ -1,4 +1,5 @@
 import type { GroupField } from 'payload/types'
+
 import { isSelfFieldLevel } from '../access/is-self'
 import type { PluginConfig } from '../types'
 

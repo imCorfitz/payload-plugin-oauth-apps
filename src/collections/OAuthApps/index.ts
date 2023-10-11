@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload/types'
+
 import type { MaybeUser, OAuthApp } from '../../types'
 
 function generate() {

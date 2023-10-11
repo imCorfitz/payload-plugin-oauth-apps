@@ -1,13 +1,14 @@
 import type { Config } from 'payload/config'
+
 import { OAuthApps } from './collections/OAuthApps'
-import type { EndpointConfig, PluginConfig } from './types'
-import { OAuthGroup } from './fields/oauth-group'
 import { oAuthEndpoints } from './endpoints/oauth'
 import oAuthCorsHeaders from './express/middleware/cors'
 import oAuthCsrf from './express/middleware/csrf'
-import { beforeRefreshOperationHook } from './hooks/before-refresh'
-import { beforeLoginOperationHook } from './hooks/before-login'
+import { OAuthGroup } from './fields/oauth-group'
 import { afterLogoutHook } from './hooks/after-logout'
+import { beforeLoginOperationHook } from './hooks/before-login'
+import { beforeRefreshOperationHook } from './hooks/before-refresh'
+import type { EndpointConfig, PluginConfig } from './types'
 
 export { oAuthManager } from './fields/oauth-manager'
 

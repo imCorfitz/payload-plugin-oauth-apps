@@ -1,4 +1,5 @@
 import type { Payload } from 'payload'
+
 import type { OAuthApp } from '../types'
 
 export default async function verifyClientCredentials(

@@ -42,14 +42,14 @@ export interface PluginConfig {
 export interface GenericUser extends User {
   oAuth: {
     _otp?: string
-    sessions?: {
+    sessions?: Array<{
       app: string | { id: string }
       userAgent?: string
       expiresAt: Date
       lastUsedAt: Date
       createdAt: Date
       id: string
-    }[]
+    }>
   }
 }
 

@@ -1,8 +1,8 @@
 import type { Endpoint } from 'payload/config'
 import type { IncomingAuthType } from 'payload/dist/auth'
 import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
+
 import generateAccessToken from '../../token/generate-access-token'
-// Types
 import type { EndpointConfig, MaybeUser } from '../../types'
 import verifyClientCredentials from '../../utils/verify-client-credentials'
 
@@ -38,7 +38,7 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
             return
           }
 
-          const cookies: { name: string; value: string }[] | undefined = headers.cookie
+          const cookies: Array<{ name: string; value: string }> | undefined = headers.cookie
             ?.split(';')
             .map((cookie: string) => cookie.trim())
             .map((cookie: string) => {

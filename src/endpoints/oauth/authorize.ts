@@ -1,10 +1,9 @@
 import type { Endpoint } from 'payload/config'
-// Types
+
 import type { EndpointConfig, EndpointHandler } from '../../types'
-// Handlers
 import credentials from '../handlers/authorize/credentials'
-import otp from '../handlers/authorize/otp'
 import magiclink from '../handlers/authorize/magiclink'
+import otp from '../handlers/authorize/otp'
 
 const handlers = {
   credentials,

@@ -1,6 +1,7 @@
-import type { Collection, PayloadRequest } from 'payload/types'
-import type { AfterLogoutHook } from 'payload/dist/collections/config/types'
 import type { IncomingAuthType } from 'payload/dist/auth'
+import type { AfterLogoutHook } from 'payload/dist/collections/config/types'
+import type { Collection, PayloadRequest } from 'payload/types'
+
 import type { EndpointConfig, GenericUser } from '../types'
 
 export interface Arguments {
@@ -16,7 +17,7 @@ export const afterLogoutHook: (config: EndpointConfig) => AfterLogoutHook =
 
     const { headers, payload } = req
 
-    const cookies: { name: string; value: string }[] | undefined = headers.cookie
+    const cookies: Array<{ name: string; value: string }> | undefined = headers.cookie
       ?.split(';')
       .map((cookie: string) => cookie.trim())
       .map((cookie: string) => {

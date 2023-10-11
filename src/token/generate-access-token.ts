@@ -1,8 +1,8 @@
 import { sign } from 'jsonwebtoken'
-import { getFieldsToSign } from 'payload/dist/auth/operations/getFieldsToSign'
 import type { Payload } from 'payload'
-import type { CollectionConfig } from 'payload/types'
 import type { IncomingAuthType, User } from 'payload/dist/auth'
+import { getFieldsToSign } from 'payload/dist/auth/operations/getFieldsToSign'
+import type { CollectionConfig } from 'payload/types'
 
 interface AccessTokenProps {
   user: User
