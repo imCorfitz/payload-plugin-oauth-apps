@@ -6,3 +6,4 @@
   - [ ] Logout
   - [ ] Refresh token
 - [ ] Write more documentation
+- [ ] Test support for vite bundler and Postgres DB adapter
