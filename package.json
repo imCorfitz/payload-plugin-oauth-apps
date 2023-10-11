@@ -1,8 +1,11 @@
 {
-  "name": "payload-plugin-oauth-apps",
-  "version": "0.1.0",
+  "name": "@imcorfitz/payload-plugin-oauth-apps",
+  "version": "0.1.1",
   "homepage:": "https://imcorfitz.com",
-  "repository": "git@github.com:imcorfitz/payload-plugin-oauth-apps.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/imcorfitz/payload-plugin-oauth-apps.git"
+  },
   "description": "Better refresh token flow for Payload CMS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -62,5 +65,9 @@
     "cryptr": "^6.3.0",
     "debug": "^4.3.4",
     "node-ipinfo": "^3.4.6"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/imcorfitz/payload-plugin-oauth-apps/issues"
+  },
+  "homepage": "https://github.com/imcorfitz/payload-plugin-oauth-apps#readme"
 }

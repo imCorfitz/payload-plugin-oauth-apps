@@ -6,11 +6,11 @@
 <a href="https://github.com/imcorfitz/payload-plugin-oauth-apps/issues">
   <img src="https://img.shields.io/github/issues/imcorfitz/payload-plugin-oauth-apps.svg" alt="Issues" />
 </a>
-<a href="https://npmjs.org/package/payload-plugin-oauth-apps">
-  <img src="https://img.shields.io/npm/v/payload-plugin-oauth-apps.svg" alt="NPM" />
+<a href="https://npmjs.org/package/@imcorfitz/payload-plugin-oauth-apps">
+  <img src="https://img.shields.io/npm/v/@imcorfitz/payload-plugin-oauth-apps.svg" alt="NPM" />
 </a>
 
-> Please note this plugin is under active development. A lot `WILL` change.
+> Please note this plugin is under active development. A lot `WILL` change. see [TODO](TODO)
 
 ## Features
 
@@ -21,22 +21,12 @@
 - Automatically adds registered OAuth apps to `CSRF` and `CORS` config in Payload
 - Full support of native Payload Auth cookies and JWT passport strategy
 
-### TODO
-
-- [ ] Create magiclink auth flow
-- [ ] Add custom generate security pass phrase function
-- [ ] Overwrite Graphql APIs / Introduce new ones
-      - Login
-      - Logout
-      - Refresh token
-- [ ] Write documentation
-
 ## Installation
 
 ```
-npm install payload-plugin-oauth-apps
+npm install @imcorfitz/payload-plugin-oauth-apps
 # or
-yarn add payload-plugin-oauth-apps
+yarn add @imcorfitz/payload-plugin-oauth-apps
 ```
 
 
@@ -47,7 +37,7 @@ yarn add payload-plugin-oauth-apps
 
 ```ts
 // payload.config.ts
-import { oAuthApps } from "payload-plugin-oauth-apps";
+import { oAuthApps } from "@imcorfitz/payload-plugin-oauth-apps";
 
 export default buildConfig({
   // ... Payload Config
@@ -66,7 +56,7 @@ Add the `oAuthManager` field to your admin user collection.
 
 ```ts
 // collections/admins.ts
-import { oAuthManager } from "payload-plugin-oauth-apps";
+import { oAuthManager } from "@imcorfitz/payload-plugin-oauth-apps";
 
 const Admins: CollectionConfig = {
   slug: "admins",

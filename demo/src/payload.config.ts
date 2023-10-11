@@ -6,7 +6,7 @@ import path from 'path'
 // import Examples from './collections/Examples';
 import Users from './collections/Users'
 
-// import { oAuthApps }  from '../../dist';
+// import { oAuthApps } from '../../dist';
 // eslint-disable-next-line import/no-relative-packages
 import { oAuthApps } from '../../src'
 
