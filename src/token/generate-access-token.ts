@@ -1,12 +1,11 @@
 import { sign } from 'jsonwebtoken'
-import { fieldAffectsData, fieldHasSubFields } from 'payload/dist/fields/config/types'
+import { getFieldsToSign } from 'payload/dist/auth/operations/getFieldsToSign'
 import type { Payload } from 'payload'
-import type { CollectionConfig, Field } from 'payload/types'
-import type { IncomingAuthType } from 'payload/dist/auth'
-import type { GenericUser } from '../types'
+import type { CollectionConfig } from 'payload/types'
+import type { IncomingAuthType, User } from 'payload/dist/auth'
 
 interface AccessTokenProps {
-  user: GenericUser
+  user: User
   payload: Payload
   collection: CollectionConfig
   sessionId: string
@@ -14,43 +13,23 @@ interface AccessTokenProps {
 
 export default function generateAccessToken({
   user,
-  payload,
+  payload: { secret },
   collection,
   sessionId,
 }: AccessTokenProps) {
-  // Decide which user fields to include in the JWT
-  const fieldsToSign: Record<string, unknown> = collection.fields.reduce<Record<string, unknown>>(
-    (signedFields, field: Field) => {
-      const result = {
-        ...signedFields,
-      }
-
-      if (!fieldAffectsData(field) && fieldHasSubFields(field)) {
-        field.fields.forEach(subField => {
-          if (fieldAffectsData(subField) && subField.saveToJWT) {
-            result[subField.name] = user[subField.name]
-          }
-        })
-      }
-
-      if (fieldAffectsData(field) && field.saveToJWT) {
-        result[field.name] = user[field.name]
-      }
-
-      return result
-    },
-    {
-      __ses: sessionId,
+  const fieldsToSign = {
+    ...getFieldsToSign({
+      collectionConfig: collection,
+      user,
       email: user.email,
-      id: user.id,
-      collection: collection.slug,
-    },
-  )
+    }),
+    __ses: sessionId,
+  }
 
   const expiresIn = (collection.auth as IncomingAuthType).tokenExpiration || 60 * 60
 
   // Sign the JWT
-  const accessToken = sign(fieldsToSign, payload.secret, {
+  const accessToken = sign(fieldsToSign, secret, {
     expiresIn,
   })
 

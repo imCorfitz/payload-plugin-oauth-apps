@@ -64,7 +64,7 @@ export default async function generateRefreshToken({ app, req, user, config }: R
   const expiresAt = new Date(Date.now() + expiresIn * 1000)
 
   // Create new session for the user
-  const updatedUser: NonNullable<GenericUser> = await payload.update({
+  const updatedUser = (await payload.update({
     collection: collection.slug,
     id: user.id,
     data: {
@@ -82,7 +82,7 @@ export default async function generateRefreshToken({ app, req, user, config }: R
         ],
       },
     },
-  })
+  })) as NonNullable<GenericUser>
 
   const session = updatedUser.oAuth.sessions?.find(
     ses => currentSessions.findIndex(s => s.app === ses.app) === -1,

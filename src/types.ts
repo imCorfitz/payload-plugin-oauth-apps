@@ -1,4 +1,5 @@
 import type { PayloadHandler } from 'payload/config'
+import type { User } from 'payload/dist/auth'
 import type { CollectionConfig } from 'payload/dist/collections/config/types'
 import type { FieldAccess, PayloadRequest } from 'payload/types'
 
@@ -38,9 +39,7 @@ export interface PluginConfig {
   }
 }
 
-export interface GenericUser {
-  id: string
-  email: string
+export interface GenericUser extends User {
   oAuth: {
     _otp?: string
     sessions?: {
@@ -52,7 +51,6 @@ export interface GenericUser {
       id: string
     }[]
   }
-  [key: string]: unknown
 }
 
 export type MaybeUser = GenericUser | null | undefined

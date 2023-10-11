@@ -5,6 +5,9 @@ import { OAuthGroup } from './fields/oauth-group'
 import { oAuthEndpoints } from './endpoints/oauth'
 import oAuthCorsHeaders from './express/middleware/cors'
 import oAuthCsrf from './express/middleware/csrf'
+import { beforeRefreshOperationHook } from './hooks/before-refresh'
+import { beforeLoginOperationHook } from './hooks/before-login'
+import { afterLogoutHook } from './hooks/after-logout'
 
 export { oAuthManager } from './fields/oauth-manager'
 
@@ -53,6 +56,21 @@ export const oAuthApps =
               ...(collection.endpoints || []),
               ...oAuthEndpoints(endpointConfig),
             ]
+
+            /**
+             * Add OAuth hooks to the users collection
+             */
+            collection.hooks = {
+              beforeOperation: [
+                ...(collection.hooks?.beforeOperation || []),
+                beforeRefreshOperationHook(endpointConfig),
+                beforeLoginOperationHook(endpointConfig),
+              ],
+              afterLogout: [
+                ...(collection.hooks?.afterLogout || []),
+                afterLogoutHook(endpointConfig),
+              ],
+            }
           }
 
           return collection

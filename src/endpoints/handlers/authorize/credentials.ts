@@ -1,13 +1,20 @@
 import type { PayloadHandler } from 'payload/config'
 import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
-import type { IncomingAuthType } from 'payload/dist/auth/types'
+import isLocked from 'payload/dist/auth/isLocked'
+import sanitizeInternalFields from 'payload/dist/utilities/sanitizeInternalFields'
+import { AuthenticationError, LockedAuth } from 'payload/dist/errors'
+import { authenticateLocalStrategy } from 'payload/dist/auth/strategies/local/authenticate'
+import { incrementLoginAttempts } from 'payload/dist/auth/strategies/local/incrementLoginAttempts'
+import unlock from 'payload/dist/auth/operations/unlock'
 import generateAccessToken from '../../../token/generate-access-token'
 import generateRefreshToken from '../../../token/generate-refresh-token'
-import type { EndpointConfig, GenericUser } from '../../../types'
+import type { EndpointConfig } from '../../../types'
 import verifyClientCredentials from '../../../utils/verify-client-credentials'
 
 const handler: (config: EndpointConfig) => PayloadHandler = config => async (req, res) => {
   const { payload } = req
+
+  const collection = payload.collections[config.endpointCollection.slug]
 
   const { email, password, clientId, clientSecret } = req.body as {
     email?: string
@@ -29,25 +36,56 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
     return
   }
 
-  // Validate the user credentials
-  const user = await payload.login({
-    collection: config.endpointCollection.slug,
-    depth: 1,
-    data: {
-      email,
-      password,
-    },
+  let user = await payload.db.findOne<any>({
+    collection: collection.config.slug,
+    req,
+    where: { email: { equals: email.toLowerCase() } },
   })
 
-  if (!user.user) {
-    res.status(401).send('Unauthorized: Invalid user credentials')
-    return
+  if (!user || (collection.config.auth.verify && user._verified === false)) {
+    throw new AuthenticationError(req.t)
+  }
+
+  if (user && isLocked(user.lockUntil)) {
+    throw new LockedAuth(req.t)
+  }
+
+  const authResult = await authenticateLocalStrategy({ doc: user, password })
+
+  user = sanitizeInternalFields(user)
+
+  const maxLoginAttemptsEnabled = (collection.config.auth.maxLoginAttempts || 0) > 0
+
+  if (!authResult) {
+    if (maxLoginAttemptsEnabled) {
+      await incrementLoginAttempts({
+        collection: collection.config,
+        doc: user,
+        payload: req.payload,
+        req,
+      })
+    }
+
+    throw new AuthenticationError(req.t)
+  }
+
+  if (maxLoginAttemptsEnabled) {
+    await unlock({
+      collection: {
+        config: collection.config,
+      },
+      data: {
+        email,
+      },
+      overrideAccess: true,
+      req,
+    })
   }
 
   // Generate the token
   const refreshData = await generateRefreshToken({
     app: client,
-    user: user.user as GenericUser,
+    user,
     req,
     config,
   })
@@ -58,23 +96,21 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
   }
 
   const { expiresIn, accessToken } = generateAccessToken({
-    user: user.user as GenericUser,
+    user,
     payload,
-    collection: config.endpointCollection,
+    collection: collection.config,
     sessionId: refreshData.sessionId,
   })
-
-  const collectionAuthConfig = config.endpointCollection.auth as IncomingAuthType
 
   if (client.enableCookies) {
     // Set cookie
     res.cookie(`${payload.config.cookiePrefix}-token`, accessToken, {
       path: '/',
       httpOnly: true,
-      expires: getCookieExpiration(collectionAuthConfig.tokenExpiration || 60 * 60),
-      secure: collectionAuthConfig.cookies?.secure,
-      sameSite: collectionAuthConfig.cookies?.sameSite,
-      domain: collectionAuthConfig.cookies?.domain || undefined,
+      expires: getCookieExpiration(collection.config.auth.tokenExpiration || 60 * 60),
+      secure: collection.config.auth.cookies.secure,
+      sameSite: collection.config.auth.cookies.sameSite,
+      domain: collection.config.auth.cookies.domain || undefined,
     })
 
     // Set cookie
@@ -82,9 +118,9 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
       path: '/',
       httpOnly: true,
       expires: getCookieExpiration(refreshData.expiresIn),
-      secure: collectionAuthConfig.cookies?.secure,
-      sameSite: collectionAuthConfig.cookies?.sameSite,
-      domain: collectionAuthConfig.cookies?.domain || undefined,
+      secure: collection.config.auth.cookies.secure,
+      sameSite: collection.config.auth.cookies.sameSite,
+      domain: collection.config.auth.cookies.domain || undefined,
     })
   }
 

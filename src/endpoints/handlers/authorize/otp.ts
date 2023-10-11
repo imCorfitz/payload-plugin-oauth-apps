@@ -59,7 +59,7 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
     (otp: { exp: number }) => otp.exp > Date.now(), // Remove expired OTPs
   )
 
-  user = await payload.update({
+  user = (await payload.update({
     id: user.id,
     collection: config.endpointCollection.slug,
     data: {
@@ -74,7 +74,7 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
         ]),
       },
     },
-  })
+  })) as GenericUser
 
   let html = `<p>Here is your one-time password: ${authCode}</p>`
 

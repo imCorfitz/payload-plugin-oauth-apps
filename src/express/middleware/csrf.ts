@@ -8,10 +8,10 @@ export default async function oAuthCsrf(req: PayloadRequest, _res: Response, nex
   const config = payload.config
 
   if (Array.isArray(config.csrf)) {
-    const apps = await payload.find({
+    const apps = (await payload.find({
       collection: 'oAuthApps',
       depth: 0,
-    })
+    })) as unknown as { docs: OAuthApp[] }
 
     const origins = apps.docs
       .filter((app: OAuthApp) => app.enableCookies)

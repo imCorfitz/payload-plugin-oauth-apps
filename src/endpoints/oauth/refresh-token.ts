@@ -9,13 +9,6 @@ import verifyClientCredentials from '../../utils/verify-client-credentials'
 export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
   return [
     {
-      path: '/refresh-token',
-      method: 'post',
-      handler: (_req, res) => {
-        res.status(404).send('Not Found. Use /oauth/refresh-token instead.')
-      },
-    },
-    {
       path: '/oauth/refresh-token',
       method: 'post',
       async handler(req, res) {
@@ -71,11 +64,11 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
             return
           }
 
-          const user: MaybeUser = await payload.findByID({
+          const user = (await payload.findByID({
             collection: config.endpointCollection.slug,
             id: userId,
             depth: 1,
-          })
+          })) as MaybeUser
 
           if (!user) {
             res.status(404).send('User not Found')

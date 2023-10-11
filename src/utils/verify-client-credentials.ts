@@ -26,5 +26,5 @@ export default async function verifyClientCredentials(
     },
   })
 
-  return client.docs.length > 0 ? (client.docs[0] as OAuthApp) : null
+  return client.docs.length > 0 ? (client.docs[0] as unknown as OAuthApp) : null
 }
