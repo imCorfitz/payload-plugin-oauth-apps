@@ -1,20 +1,36 @@
-name: CI
+name: Publish
 on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
   push:
     branches:
-      - "**"
+      - "main"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  build:
+  publish:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: yarn/action-setup@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          version: 7
-      - uses: actions/setup-node@v3
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
 
       - run: yarn install --frozen-lockfile
-      - run: yarn lint && yarn build
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: yarn release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
