@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.1] - 2023-10-12
 
-### Initial release
+### Initial pre-release
 
 - Ability to create multiple `OAuth Apps` with individual client credentials
 - Better session flow using revokable longer-lived `refresh tokens`
