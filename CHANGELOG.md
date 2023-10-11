@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.2
+
+### Patch Changes
+
+- 7bc1279: ### Added
+  Added changeset package
+  Added Github workflows
+  ### Changed
+  Configured ESLint
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
