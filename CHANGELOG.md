@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+### Patch Changes
+
+- e5d1de5: Updated documentation
+
 ## 0.1.2
 
 ### Patch Changes
