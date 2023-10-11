@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/npm/v/@imcorfitz/payload-plugin-oauth-apps.svg" alt="NPM" />
 </a>
 
-> Please note this plugin is under active development. A lot `WILL` change. see [TODO](TODO)
+> Please note this plugin is under active development. A lot `WILL` change. see [TODO](TODO.md)
 
 ## Features
 
