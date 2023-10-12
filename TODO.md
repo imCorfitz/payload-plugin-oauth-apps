@@ -1,4 +1,5 @@
 # TODO
+
 - [ ] Create magiclink auth flow
 - [ ] Add custom generate security pass phrase function
 - [ ] Overwrite Graphql APIs / Introduce new ones
@@ -7,3 +8,4 @@
   - [ ] Refresh token
 - [ ] Write more documentation
 - [ ] Test support for vite bundler and Postgres DB adapter
+- [ ] Write tests
