@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/npm/v/@imcorfitz/payload-plugin-oauth-apps.svg" alt="NPM" />
 </a>
 
-> Please note this plugin is under active development. A lot `WILL` change. Please see [TODO](TODO.md)
+> Please note this plugin is under active development. It should `NOT` be considered production ready. A lot `WILL` change. Please see [TODO](TODO.md)
 
 ## Features
 
@@ -32,6 +32,7 @@ yarn add @imcorfitz/payload-plugin-oauth-apps
 ### Requirements
 
 - Payload ^2.0.0
+- `serverURL` is required in your `payload.config.ts` file
 
 ## Usage
 
@@ -78,7 +79,7 @@ export default buildConfig({
   - `generateEmailHTML`: method | optional
   - `generateEmailSubject`: method | optional
 
-  When using `otp` and aothorization method, you can set the expiration (`otpExpiration` - defaults to 10 minutes) and customise how you want the one-time password to be generated (`generateOTP` - defaults to generating a 6-digit number).
+  When using `otp` and authorization method, you can set the expiration (`otpExpiration` - defaults to 10 minutes) and customise how you want the one-time password to be generated (`generateOTP` - defaults to generating a 6-digit number).
 
   Both `magiclink` (Coming soon) and `otp` allows you to set the `generateEmailHTML` and `generateEmailSubject` methods to customise the email sent to the user for authentication. In both method you will have access to following properties:
 
@@ -101,7 +102,7 @@ export default buildConfig({
 
   By default all refresh tokens have a lifespan of 30 days. You can override this by passing `refreshTokenExpiration` with the amount of seconds a refresh token should be valid for.
 
-  The plugin uses [`IPInfo`](https://ipinfo.io/) to fetch location information whenever a session is created. To use this, simply set your own `ipinfoApiKey`. If you wish to use an alternative location detection service, feel free to use the `fetchLocationInfo` method which gives you following properties:
+  The plugin uses [`IPInfo`](https://ipinfo.io/) to fetch location information whenever a session is created. To use this, simply set your own `ipinfoApiKey`. (_Please note, that it doesn't work on localhost_). If you wish to use an alternative location detection service, feel free to use the `fetchLocationInfo` method which gives you following properties:
 
   - `req`: PayloadRequest
   - `ip`: The detected IP address | possibly undefined
@@ -251,7 +252,7 @@ This plugin was initially written to work with Payload ^1.0.0. An effort has bee
 
 ### GraphQL
 
-The entire auth, refresh and logout flow is fully working using the REST api. I ahve yet to create dedicated GraphQL mutations and resolvers. This is in the works.
+The entire auth, refresh and logout flow is fully working using the REST api. I have yet to create dedicated GraphQL mutations and resolvers. This is in the works.
 
 ## Contributing
 
