@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+### Patch Changes
+
+- 3bb8122: Minor updates to documentation
+
 ## 0.1.3
 
 ### Patch Changes
