@@ -1,6 +1,4 @@
 import type { Endpoint } from 'payload/config'
-import type { IncomingAuthType } from 'payload/dist/auth'
-import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
 
 import generateAccessToken from '../../token/generate-access-token'
 import type { EndpointConfig, MaybeUser } from '../../types'
@@ -95,20 +93,6 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
             collection: config.endpointCollection,
             sessionId,
           })
-
-          const collectionAuthConfig = config.endpointCollection.auth as IncomingAuthType
-
-          if (client.enableCookies) {
-            // Set cookie
-            res.cookie(`${payload.config.cookiePrefix}-token`, accessToken, {
-              path: '/',
-              httpOnly: true,
-              expires: getCookieExpiration(collectionAuthConfig.tokenExpiration || 60 * 60),
-              secure: collectionAuthConfig.cookies?.secure,
-              sameSite: collectionAuthConfig.cookies?.sameSite,
-              domain: collectionAuthConfig.cookies?.domain || undefined,
-            })
-          }
 
           res.send({
             accessToken,

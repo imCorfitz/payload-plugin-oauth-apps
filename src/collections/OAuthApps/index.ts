@@ -86,21 +86,6 @@ export const OAuthApps: CollectionConfig = {
       },
     },
     {
-      type: 'row',
-      fields: [
-        {
-          type: 'checkbox',
-          name: 'enableCookies',
-          label: 'Enable Cookies',
-          defaultValue: false,
-          admin: {
-            description:
-              'This will create responsoe cookies when the user authenticates as well as add the hostname to the list of allowed origins for CSRF.',
-          },
-        },
-      ],
-    },
-    {
       type: 'group',
       name: 'credentials',
       label: 'Application Credentials',

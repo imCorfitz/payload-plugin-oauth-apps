@@ -4,7 +4,6 @@ import unlock from 'payload/dist/auth/operations/unlock'
 import { authenticateLocalStrategy } from 'payload/dist/auth/strategies/local/authenticate'
 import { incrementLoginAttempts } from 'payload/dist/auth/strategies/local/incrementLoginAttempts'
 import { AuthenticationError, LockedAuth } from 'payload/dist/errors'
-import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
 import sanitizeInternalFields from 'payload/dist/utilities/sanitizeInternalFields'
 
 import generateAccessToken from '../../../token/generate-access-token'
@@ -100,28 +99,6 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
     collection: collection.config,
     sessionId: refreshData.sessionId,
   })
-
-  if (client.enableCookies) {
-    // Set cookie
-    res.cookie(`${payload.config.cookiePrefix}-token`, accessToken, {
-      path: '/',
-      httpOnly: true,
-      expires: getCookieExpiration(collection.config.auth.tokenExpiration || 60 * 60),
-      secure: collection.config.auth.cookies.secure,
-      sameSite: collection.config.auth.cookies.sameSite,
-      domain: collection.config.auth.cookies.domain || undefined,
-    })
-
-    // Set cookie
-    res.cookie(`${payload.config.cookiePrefix}-refresh`, refreshData.refreshToken, {
-      path: '/',
-      httpOnly: true,
-      expires: getCookieExpiration(refreshData.expiresIn),
-      secure: collection.config.auth.cookies.secure,
-      sameSite: collection.config.auth.cookies.sameSite,
-      domain: collection.config.auth.cookies.domain || undefined,
-    })
-  }
 
   res.send({
     accessToken,

@@ -1,6 +1,4 @@
 import type { Endpoint } from 'payload/config'
-import type { IncomingAuthType } from 'payload/dist/auth'
-import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
 
 import generateAccessToken from '../../token/generate-access-token'
 import generateRefreshToken from '../../token/generate-refresh-token'
@@ -105,30 +103,6 @@ export const verify: (config: EndpointConfig) => Endpoint[] = config => {
             collection: config.endpointCollection,
             sessionId: refreshData.sessionId,
           })
-
-          const collectionAuthConfig = config.endpointCollection.auth as IncomingAuthType
-
-          if (client.enableCookies) {
-            // Set cookie
-            res.cookie(`${payload.config.cookiePrefix}-token`, accessToken, {
-              path: '/',
-              httpOnly: true,
-              expires: getCookieExpiration(collectionAuthConfig.tokenExpiration || 60 * 60),
-              secure: collectionAuthConfig.cookies?.secure,
-              sameSite: collectionAuthConfig.cookies?.sameSite,
-              domain: collectionAuthConfig.cookies?.domain || undefined,
-            })
-
-            // Set cookie
-            res.cookie(`${payload.config.cookiePrefix}-refresh`, refreshData.refreshToken, {
-              path: '/',
-              httpOnly: true,
-              expires: getCookieExpiration(refreshData.expiresIn),
-              secure: collectionAuthConfig.cookies?.secure,
-              sameSite: collectionAuthConfig.cookies?.sameSite,
-              domain: collectionAuthConfig.cookies?.domain || undefined,
-            })
-          }
 
           res.send({
             accessToken,

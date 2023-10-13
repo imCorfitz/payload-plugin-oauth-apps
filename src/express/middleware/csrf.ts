@@ -14,9 +14,7 @@ export default async function oAuthCsrf(req: PayloadRequest, _res: Response, nex
       depth: 0,
     })) as unknown as { docs: OAuthApp[] }
 
-    const origins = apps.docs
-      .filter((app: OAuthApp) => app.enableCookies)
-      .map((app: OAuthApp) => app.homepageUrl)
+    const origins = apps.docs.map((app: OAuthApp) => app.homepageUrl)
 
     config.csrf = [...config.csrf, ...origins].filter(
       (value, index, self) => self.indexOf(value) === index,

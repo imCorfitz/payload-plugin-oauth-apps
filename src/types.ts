@@ -61,7 +61,6 @@ export interface OAuthApp {
   description: string
   homepageUrl: string
   callbackUrl: string
-  enableCookies: boolean
   credentials?: {
     clientId?: string
     clientSecret?: string

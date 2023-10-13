@@ -19,7 +19,6 @@
 - `Session management` on User collections with ability to revoke active sessions
 - `Passwordless authentication` using One-time password (OTP) or Magiclink (Coming soon)
 - Automatically adds registered OAuth apps to `CSRF` and `CORS` config in Payload
-- Full support of native Payload Auth cookies and JWT passport strategy
 
 ## Installation
 
@@ -176,11 +175,11 @@ const Admins: CollectionConfig = {
 
   > Note: Don't ever expose your client id or client secret to the client. These operations should always be made securely from server-side.
 
-  | Parameter               | Description                                                                                                                          |
-  | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-  | refreshToken            | Only `required` if cookie authentication isn't enable for the OAuth app. Otherwise passing the cookies with the request will suffice |
-  | clientId `required`     | The client id of the OAuth App performing the operation                                                                              |
-  | clientSecret `required` | The client secret of the OAuth App performing the operation                                                                          |
+  | Parameter               | Description                                                 |
+  | ----------------------- | ----------------------------------------------------------- |
+  | refreshToken `required` | The refresh token issued at authorization                   |
+  | clientId `required`     | The client id of the OAuth App performing the operation     |
+  | clientSecret `required` | The client secret of the OAuth App performing the operation |
 
   ```ts
   // Request
