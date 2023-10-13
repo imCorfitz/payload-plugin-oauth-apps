@@ -27,6 +27,21 @@ export interface PluginConfig {
       token?: string
       user?: unknown
     }) => string | Promise<string>
+    generateEmailVariables?: (args?: {
+      req?: PayloadRequest
+      variables?:
+        | {
+            __method: 'magiclink'
+            token?: string
+            magiclink?: string
+          }
+        | {
+            __method: 'otp'
+            otp?: string
+          }
+      user?: unknown
+      client?: Omit<OAuthApp, 'credentials' | 'id'>
+    }) => Record<string, unknown> | Promise<Record<string, unknown>>
   }
   sessions?: {
     limit?: number

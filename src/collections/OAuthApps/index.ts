@@ -130,5 +130,66 @@ export const OAuthApps: CollectionConfig = {
         },
       ],
     },
+    {
+      type: 'group',
+      name: 'settings',
+      label: 'Settings',
+      fields: [
+        {
+          type: 'checkbox',
+          name: 'customizeOtpEmail',
+          label: 'Customize OTP Email',
+          defaultValue: false,
+        },
+        {
+          type: 'text',
+          name: 'otpEmailSubject',
+          label: 'OTP Email Subject',
+          admin: {
+            condition: (_, siblingData) => siblingData?.customizeOtpEmail,
+            description:
+              'This is the subject that will be sent in the email when using OTP authentication. You have access to the variables `{{otp}}` and `{{email}}` - and any additional variables made available by the administrator.',
+          },
+        },
+        {
+          type: 'code',
+          name: 'otpEmail',
+          label: 'OTP Email',
+          admin: {
+            language: 'html',
+            condition: (_, siblingData) => siblingData?.customizeOtpEmail,
+            description:
+              'This is the HTML that will be sent in the email when using OTP authentication. You have access to the variables `{{otp}}` and `{{email}}` - and any additional variables made available by the administrator.',
+          },
+        },
+        {
+          type: 'checkbox',
+          name: 'customizeMagiclinkEmail',
+          label: 'Customize Magiclink Email',
+          defaultValue: false,
+        },
+        {
+          type: 'text',
+          name: 'magiclinkEmailSubject',
+          label: 'Magiclink Email Subject',
+          admin: {
+            condition: (_, siblingData) => siblingData?.customizeMagiclinkEmail,
+            description:
+              'This is the subject that will be sent in the email when using magiclink authentication. You have access to the variables `{{magiclink}}` and `{{email}}` - and any additional variables made available by the administrator.',
+          },
+        },
+        {
+          type: 'code',
+          name: 'magiclinkEmail',
+          label: 'Magiclink Email',
+          admin: {
+            language: 'html',
+            condition: (_, siblingData) => siblingData?.customizeMagiclinkEmail,
+            description:
+              'This is the HTML that will be sent in the email when using magiclink authentication. You have access to the variables `{{magiclink}}` and `{{email}}` - and any additional variables made available by the administrator.',
+          },
+        },
+      ],
+    },
   ],
 }
