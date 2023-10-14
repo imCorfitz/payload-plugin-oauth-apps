@@ -17,16 +17,6 @@ export interface PluginConfig {
     customHandler?: EndpointHandler
     otpExpiration?: number
     generateOTP?: (args?: { req?: PayloadRequest; user?: unknown }) => string | Promise<string>
-    generateEmailHTML?: (args?: {
-      req?: PayloadRequest
-      token?: string
-      user?: unknown
-    }) => string | Promise<string>
-    generateEmailSubject?: (args?: {
-      req?: PayloadRequest
-      token?: string
-      user?: unknown
-    }) => string | Promise<string>
     generateEmailVariables?: (args?: {
       req?: PayloadRequest
       variables?:
@@ -41,7 +31,7 @@ export interface PluginConfig {
           }
       user?: unknown
       client?: Omit<OAuthApp, 'credentials' | 'id'>
-    }) => Record<string, unknown> | Promise<Record<string, unknown>>
+    }) => Record<string, string> | Promise<Record<string, string>>
   }
   sessions?: {
     limit?: number
@@ -79,6 +69,14 @@ export interface OAuthApp {
   credentials?: {
     clientId?: string
     clientSecret?: string
+  }
+  settings?: {
+    customizeOtpEmail?: boolean
+    otpEmail?: string
+    otpEmailSubject?: string
+    customizeMagiclinkEmail?: boolean
+    magiclinkEmail?: string
+    magiclinkEmailSubject?: string
   }
 }
 

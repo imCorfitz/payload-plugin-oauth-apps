@@ -78,25 +78,37 @@ const handler: (config: EndpointConfig) => PayloadHandler = config => async (req
   })) as GenericUser
 
   let html = `<p>Here is your one-time password: ${authCode}</p>`
-
-  // Allow config to override email content
-  if (typeof config.authorization?.generateEmailHTML === 'function') {
-    html = await config.authorization.generateEmailHTML({
-      req,
-      token: authCode,
-      user,
-    })
-  }
-
   let subject = 'Your one-time password'
 
-  // Allow config to override email subject
-  if (typeof config.authorization?.generateEmailSubject === 'function') {
-    subject = await config.authorization.generateEmailSubject({
-      req,
-      token: authCode,
-      user,
-    })
+  if (client.settings?.customizeOtpEmail) {
+    const variables: Record<string, string> = {
+      email,
+      otp: authCode,
+      ...(await config.authorization?.generateEmailVariables?.({
+        req,
+        variables: {
+          __method: 'otp',
+          otp: authCode,
+        },
+        user,
+        client,
+      })),
+    }
+
+    // Replace all variables in the email subject and body {{variable}}
+    if (client.settings?.otpEmail) {
+      html = client.settings.otpEmail.replace(
+        /{{\s*([^}]+)\s*}}/g,
+        (_, variable) => variables[variable.trim()] || '',
+      )
+    }
+
+    if (client.settings?.otpEmailSubject) {
+      subject = client.settings.otpEmailSubject.replace(
+        /{{\s*([^}]+)\s*}}/g,
+        (_, variable) => variables[variable.trim()] || '',
+      )
+    }
   }
 
   void sendEmail({
