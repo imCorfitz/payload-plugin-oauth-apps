@@ -75,8 +75,7 @@ export default buildConfig({
   - `customHandler`: EndpointHandler | optional
   - `otpExpiration`: number | optional
   - `generateOTP`: method | optional
-  - `generateEmailHTML`: method | optional
-  - `generateEmailSubject`: method | optional
+  - `generateEmailVariables`: method | optional
 
   When using `otp` and authorization method, you can set the expiration (`otpExpiration` - defaults to 10 minutes) and customise how you want the one-time password to be generated (`generateOTP` - defaults to generating a 6-digit number).
 
