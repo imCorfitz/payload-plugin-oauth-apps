@@ -31,6 +31,10 @@ export interface PluginConfig {
       user?: unknown
       client?: Omit<OAuthApp, 'credentials' | 'id'>
     }) => Record<string, string> | Promise<Record<string, string>>
+    magicLinkExpiration?: number
+    verificationPhraseTemplate?: string
+    verificationPhraseNouns?: string[]
+    verificationPhraseAdjectives?: string[]
   }
   sessions?: {
     limit?: number

@@ -29,7 +29,7 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
     return
   }
 
-  await sendMagiclink({
+  const result = await sendMagiclink({
     client,
     collection,
     config,
@@ -41,6 +41,7 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
   })
 
   res.send({
+    ...result,
     message: 'Magiclink sent',
   })
 }

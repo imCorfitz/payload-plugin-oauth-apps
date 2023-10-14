@@ -4,12 +4,14 @@ import { initTransaction } from 'payload/dist/utilities/initTransaction'
 import { killTransaction } from 'payload/dist/utilities/killTransaction'
 import type { Collection, PayloadRequest } from 'payload/types'
 
-import type { GenericUser, OAuthApp, OperationConfig } from '../../types'
+import { sentence, setAdjectives, setNouns, setTemplates } from '../../lib/txtgen'
+import type { OAuthApp, OperationConfig } from '../../types'
 import generateAuthCode from '../../utils/generate-auth-code'
 
 export interface Result {
   exp?: number
   token?: string
+  verificationPhrase?: string
 }
 
 export interface Arguments {
@@ -58,35 +60,55 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
       throw new LockedAuth(req.t)
     }
 
+    setTemplates([config.authorization?.verificationPhraseTemplate || '{{ adjective }} {{ noun }}'])
+
+    if (
+      config.authorization?.verificationPhraseAdjectives &&
+      config.authorization?.verificationPhraseAdjectives?.length > 0
+    ) {
+      setAdjectives(config.authorization?.verificationPhraseAdjectives)
+    }
+
+    if (
+      config.authorization?.verificationPhraseNouns &&
+      config.authorization?.verificationPhraseNouns?.length > 0
+    ) {
+      setNouns(config.authorization?.verificationPhraseNouns)
+    }
+
+    const verificationPhrase = sentence(true, true)
+
     const authCode = generateAuthCode(
-      16,
+      12,
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
     )
 
-    // Allow config to override auth code
-    // if (typeof config.authorization?.generateOTP === 'function') {
-    //   authCode = await config.authorization.generateOTP({
-    //     req,
-    //     user,
-    //   })
-    // }
+    const exp = new Date(
+      Date.now() + (config.authorization?.magicLinkExpiration || 60 * 60 * 2) * 1000,
+    ).getTime() // 2 hours
 
-    const exp = new Date(Date.now() + (config.authorization?.otpExpiration || 600) * 1000).getTime() // 10 minutes
+    const token = payload.encrypt(`${user.id}::${authCode}::${exp}::${client.id}`)
+    const magiclink = `${payload.config.serverURL}?email=${user.email}&token=${token}`
 
-    const magiclink = ''
-
-    let html = `<p>Here is your one-time password: ${authCode}</p>`
-    let subject = 'Your one-time password'
+    let html = `<p>We have received a login attempt with the following code:</p>
+    <p style="font-weight: bold; text-align: center; padding: 4px; background-color: #eaeaea;">${verificationPhrase}</p>
+    <p>To complete the login process, please click on following link:</p>
+    <p><a style="word-break: break-all;" href="${magiclink}">${magiclink}</a></p>
+    <p>&nbsp;</p>
+    <p>If you didn't attempt to log in but received this email, please ignore this email.</p>`
+    let subject = 'Login verification'
 
     if (client.settings?.customizeMagiclinkEmail) {
       const variables: Record<string, string> = {
         email,
         magiclink,
+        token,
         ...(await config.authorization?.generateEmailVariables?.({
           req,
           variables: {
-            __method: 'otp',
-            otp: authCode,
+            __method: 'magiclink',
+            magiclink,
+            token,
           },
           user,
           client,
@@ -119,7 +141,9 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
     if (shouldCommit && req.transactionID) await payload.db.commitTransaction?.(req.transactionID)
 
     return {
-      token: '',
+      token: authCode,
+      exp,
+      verificationPhrase,
     }
   } catch (error: unknown) {
     await killTransaction(req)
