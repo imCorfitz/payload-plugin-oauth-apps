@@ -12,10 +12,10 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
       method: 'post',
       async handler(req, res) {
         try {
-          const { headers, payload } = req
+          const { payload } = req
 
           const {
-            refreshToken: rftoken,
+            refreshToken: token,
             clientId,
             clientSecret,
           } = req.body as {
@@ -36,18 +36,6 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
             res.status(httpStatus.UNAUTHORIZED).send('Unauthorized: Invalid client credentials')
             return
           }
-
-          const cookies: Array<{ name: string; value: string }> | undefined = headers.cookie
-            ?.split(';')
-            .map((cookie: string) => cookie.trim())
-            .map((cookie: string) => {
-              const [name, value] = cookie.split('=')
-              return { name, value }
-            })
-
-          const token =
-            rftoken ||
-            cookies?.find(cookie => cookie.name === `${payload.config.cookiePrefix}-refresh`)?.value
 
           if (!token) {
             res.status(httpStatus.BAD_REQUEST).send('Bad Request: Missing refresh token')

@@ -69,11 +69,11 @@ async function verifyCode(incomingArgs: Arguments): Promise<Result> {
 
     const linkIndex = magiclinks.findIndex((o: { code: string }) => o.code === code)
 
-    if (linkIndex === -1) {
+    if (linkIndex === -1 || magiclinks[linkIndex].claimed) {
       throw new APIError('Invalid token', httpStatus.UNAUTHORIZED)
     }
 
-    const remainingMagiclinks = magiclinks.filter((o: { code: string }) => o.code !== code)
+    magiclinks[linkIndex].claimed = true
 
     user = (await payload.update({
       id: user.id,
@@ -82,7 +82,7 @@ async function verifyCode(incomingArgs: Arguments): Promise<Result> {
       data: {
         oAuth: {
           ...user.oAuth,
-          _magiclinks: JSON.stringify(remainingMagiclinks),
+          _magiclinks: JSON.stringify(magiclinks),
         },
       },
     })) as GenericUser

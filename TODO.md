@@ -1,6 +1,5 @@
 # To Do
 
-- [ ] Create magiclink auth flow
 - [ ] Overwrite Graphql APIs / Introduce new ones
   - [ ] Login
   - [ ] Logout

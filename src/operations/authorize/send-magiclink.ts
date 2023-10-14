@@ -88,7 +88,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
     ).getTime() // 2 hours
 
     const token = payload.encrypt(`${user.id}::${authCode}::${exp}::${client.id}`)
-    const magiclink = `${payload.config.serverURL}/api/${collectionConfig.slug}/oauth/verify?email=${user.email}&token=${token}`
+    const magiclink = `${payload.config.serverURL}/api/${collectionConfig.slug}/oauth/verify-magiclink?email=${user.email}&token=${token}`
 
     let html = `<p>We have received a login attempt with the following code:</p>
     <p style="font-weight: bold; text-align: center; padding: 4px; background-color: #eaeaea;">${verificationPhrase}</p>
@@ -99,6 +99,11 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
     let subject = 'Login verification'
 
     if (client.settings?.customizeMagiclinkEmail) {
+      // Clone client and remove sensitive data
+      const emailClient: Partial<OAuthApp> = { ...client }
+      delete emailClient.credentials
+      delete emailClient.id
+
       const variables: Record<string, string> = {
         email,
         magiclink,
@@ -111,7 +116,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
             token,
           },
           user,
-          client,
+          client: emailClient as Omit<OAuthApp, 'id' | 'credentials'>,
         })),
       }
 

@@ -5,7 +5,6 @@ import { oAuthEndpoints } from './endpoints/oauth'
 import oAuthCorsHeaders from './express/middleware/cors'
 import oAuthCsrf from './express/middleware/csrf'
 import { OAuthGroup } from './fields/oauth-group'
-import { afterLogoutHook } from './hooks/after-logout'
 import { beforeLoginOperationHook } from './hooks/before-login'
 import { beforeRefreshOperationHook } from './hooks/before-refresh'
 import type { OperationConfig, PluginConfig } from './types'
@@ -66,10 +65,6 @@ export const oAuthApps =
                 ...(collection.hooks?.beforeOperation || []),
                 beforeRefreshOperationHook(endpointConfig),
                 beforeLoginOperationHook(endpointConfig),
-              ],
-              afterLogout: [
-                ...(collection.hooks?.afterLogout || []),
-                afterLogoutHook(endpointConfig),
               ],
             }
           }

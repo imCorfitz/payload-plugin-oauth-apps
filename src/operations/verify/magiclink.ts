@@ -63,6 +63,15 @@ async function verifyMagiclink(incomingArgs: Arguments): Promise<Result> {
       (o: { exp: number }) => o.exp > Date.now(), // Remove expired magiclinks
     )
 
+    // Check if the token already has been verified once before.
+    const linkIndex = magiclinks.findIndex((o: { code: string }) => o.code === authCode)
+
+    // If link exists already, throw error
+    if (linkIndex !== -1) {
+      // Token has already been used
+      throw new APIError('Unauthorized: Invalid token', httpStatus.UNAUTHORIZED)
+    }
+
     const client = (await payload.db.findOne<any>({
       collection: 'oAuthApps',
       req,
@@ -86,6 +95,7 @@ async function verifyMagiclink(incomingArgs: Arguments): Promise<Result> {
               exp,
               code: authCode,
               app: client.id,
+              claimed: false,
             },
           ]),
         },

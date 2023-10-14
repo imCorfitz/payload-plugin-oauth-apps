@@ -27,7 +27,6 @@
 - `Session management` on User collections with ability to revoke active sessions
 - `Passwordless authentication` using One-time password (OTP) or Magiclink
 - Automatically adds registered OAuth apps to `CSRF` and `CORS` config in Payload
-- Full support of native Payload Auth cookies and JWT passport strategy
 
 [0.1.1]: https://github.com/imcorfitz/payload-plugin-oauth-apps
 
