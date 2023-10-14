@@ -70,6 +70,7 @@ export default async function generateRefreshToken({ app, req, user, config }: R
     id: user.id,
     data: {
       oAuth: {
+        ...user.oAuth,
         sessions: [
           ...currentSessions,
           {

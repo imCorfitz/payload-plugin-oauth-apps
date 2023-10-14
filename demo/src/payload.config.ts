@@ -41,6 +41,11 @@ export default buildConfig({
   plugins: [
     oAuthApps({
       userCollections: [Users.slug],
+      // authorization: {
+      //   generateEmailVariables: () => ({
+      //     test: "testing a longer sentence.. Maybe wiht emojies? 🤣",
+      //   }),
+      // },
       sessions: {
         limit: 4,
         ipinfoApiKey: process.env.IPINFO_API_KEY,
