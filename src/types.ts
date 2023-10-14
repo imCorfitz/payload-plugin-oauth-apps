@@ -13,8 +13,7 @@ export interface PluginConfig {
     }
   }
   authorization?: {
-    method?: 'credentials' | 'otp' | 'magiclink' | 'custom'
-    customHandler?: EndpointHandler
+    customHandlers?: Record<string, EndpointHandler>
     otpExpiration?: number
     generateOTP?: (args?: { req?: PayloadRequest; user?: unknown }) => string | Promise<string>
     generateEmailVariables?: (args?: {
@@ -80,8 +79,8 @@ export interface OAuthApp {
   }
 }
 
-export interface EndpointConfig extends PluginConfig {
+export interface OperationConfig extends PluginConfig {
   endpointCollection: CollectionConfig
 }
 
-export type EndpointHandler = (config: EndpointConfig) => PayloadHandler | PayloadHandler[]
+export type EndpointHandler = (config: OperationConfig) => PayloadHandler | PayloadHandler[]

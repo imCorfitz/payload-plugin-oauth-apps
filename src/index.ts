@@ -8,7 +8,7 @@ import { OAuthGroup } from './fields/oauth-group'
 import { afterLogoutHook } from './hooks/after-logout'
 import { beforeLoginOperationHook } from './hooks/before-login'
 import { beforeRefreshOperationHook } from './hooks/before-refresh'
-import type { EndpointConfig, PluginConfig } from './types'
+import type { OperationConfig, PluginConfig } from './types'
 
 export { oAuthManager } from './fields/oauth-manager'
 
@@ -45,7 +45,7 @@ export const oAuthApps =
              */
             collection.fields = [...collection.fields, OAuthGroup(pluginConfig)]
 
-            const endpointConfig: EndpointConfig = {
+            const endpointConfig: OperationConfig = {
               ...pluginConfig,
               endpointCollection: collection,
             }

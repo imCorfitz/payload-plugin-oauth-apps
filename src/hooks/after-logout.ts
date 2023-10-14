@@ -2,7 +2,7 @@ import type { IncomingAuthType } from 'payload/dist/auth'
 import type { AfterLogoutHook } from 'payload/dist/collections/config/types'
 import type { Collection, PayloadRequest } from 'payload/types'
 
-import type { EndpointConfig, GenericUser } from '../types'
+import type { GenericUser, OperationConfig } from '../types'
 
 export interface Arguments {
   collection: Collection
@@ -11,7 +11,7 @@ export interface Arguments {
   token: string
 }
 
-export const afterLogoutHook: (config: EndpointConfig) => AfterLogoutHook =
+export const afterLogoutHook: (config: OperationConfig) => AfterLogoutHook =
   config => async args => {
     const { req, res } = args
 

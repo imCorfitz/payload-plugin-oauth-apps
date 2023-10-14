@@ -1,10 +1,10 @@
 import type { Endpoint } from 'payload/config'
 
 import generateAccessToken from '../../token/generate-access-token'
-import type { EndpointConfig, MaybeUser } from '../../types'
+import type { MaybeUser, OperationConfig } from '../../types'
 import verifyClientCredentials from '../../utils/verify-client-credentials'
 
-export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
+export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
   return [
     {
       path: '/oauth/refresh-token',
@@ -98,11 +98,11 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
             accessToken,
             accessExpiration: expiresIn,
           })
-        } catch (error) {
-          // req.payload.logger.error(error)
+        } catch (error: unknown) {
+          req.payload.logger.error(error)
           const message = String(error).includes('Invalid initialization vector')
             ? 'Bad Request: Refresh Token not valid'
-            : 'Internal Server Error'
+            : (error as any)?.message || 'Internal Server Error'
           res.status(500).send(message)
         }
       },

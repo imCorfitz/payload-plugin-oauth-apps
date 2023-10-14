@@ -71,8 +71,8 @@ export default buildConfig({
 
   Configure how `OAuth Apps` authorize users and initialize new sessions. The default `method` is 'crednetials'.
 
-  - `method`: 'credentials' | 'otp' | 'magiclink' | 'custom' | optional
-  - `customHandler`: EndpointHandler | optional
+  - `method`: 'credentials' | 'otp' | 'magiclink' | '<custom_method>' | optional
+  - `customHandlers`: {<custom_method>: EndpointHandler} | optional
   - `otpExpiration`: number | optional
   - `generateOTP`: method | optional
   - `generateEmailVariables`: method | optional
@@ -85,7 +85,7 @@ export default buildConfig({
   - `token`: The generated OTP or an encrypted token depending on the set method
   - `user`: Information about the user to be authenticated
 
-  > Note: `customHandler` should be set if `method` is set to 'custom' and allows you to perform the entire authentication flow yourself. Note that the plugin does expose the generateAccessToken and generateRefreshToken methods, however this goes beyond the scope of this documentation, and should be used in advance cases only.
+  > Note: `customHandlers` should be set if you wish to create your own `method` and allows you to perform the entire authentication flow yourself. Note that the plugin does expose the generateAccessToken and generateRefreshToken methods, however this goes beyond the scope of this documentation, and should be used in advance cases only.
 
 - `sessions`: object | optional
 

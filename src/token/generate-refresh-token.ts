@@ -2,13 +2,13 @@ import type { IPinfo } from 'node-ipinfo'
 import IPinfoWrapperClass from 'node-ipinfo'
 import type { PayloadRequest } from 'payload/types'
 
-import type { EndpointConfig, GenericUser, OAuthApp } from '../types'
+import type { GenericUser, OAuthApp, OperationConfig } from '../types'
 
 interface RefreshTokenProps {
   req: PayloadRequest
   app: OAuthApp
   user: GenericUser
-  config: EndpointConfig
+  config: OperationConfig
 }
 
 export default async function generateRefreshToken({ app, req, user, config }: RefreshTokenProps) {
@@ -43,7 +43,7 @@ export default async function generateRefreshToken({ app, req, user, config }: R
     location = locationInfo
   }
 
-  let currentSessions = (user.oAuth.sessions || [])
+  let currentSessions = (user.oAuth?.sessions || [])
     .map(session => {
       return {
         ...session,
