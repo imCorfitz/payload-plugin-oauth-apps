@@ -22,6 +22,18 @@ export const OAuthGroup: (pluginConfig: PluginConfig) => GroupField = pluginConf
         },
       },
       {
+        name: '_magiclinks',
+        type: 'text',
+        label: 'Magic Links',
+        hidden: true,
+        index: false,
+        access: {
+          read: () => false,
+          create: () => false,
+          update: () => false,
+        },
+      },
+      {
         type: 'array',
         name: 'sessions',
         label: 'Sessions',

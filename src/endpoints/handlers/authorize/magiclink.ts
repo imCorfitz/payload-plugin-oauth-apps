@@ -25,7 +25,7 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
   const client = await verifyClientCredentials(clientId, clientSecret, payload)
 
   if (!client) {
-    res.status(401).send('Unauthorized: Invalid client credentials')
+    res.status(httpStatus.UNAUTHORIZED).send('Unauthorized: Invalid client credentials')
     return
   }
 

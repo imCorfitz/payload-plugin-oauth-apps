@@ -1,3 +1,4 @@
+import httpStatus from 'http-status'
 import type { Endpoint } from 'payload/config'
 
 import generateAccessToken from '../../token/generate-access-token'
@@ -24,7 +25,7 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
           }
 
           if (!clientId || !clientSecret) {
-            res.status(400).send('Bad Request: Missing client credentials')
+            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Missing client credentials')
             return
           }
 
@@ -32,7 +33,7 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
           const client = await verifyClientCredentials(clientId, clientSecret, payload)
 
           if (!client) {
-            res.status(401).send('Unauthorized: Invalid client credentials')
+            res.status(httpStatus.UNAUTHORIZED).send('Unauthorized: Invalid client credentials')
             return
           }
 
@@ -49,7 +50,7 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
             cookies?.find(cookie => cookie.name === `${payload.config.cookiePrefix}-refresh`)?.value
 
           if (!token) {
-            res.status(400).send('Bad Request: Missing refresh token')
+            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Missing refresh token')
             return
           }
 
@@ -58,7 +59,7 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
           const expiresAt = new Date(Number(expiration))
 
           if (expiresAt < new Date(Date.now())) {
-            res.status(401).send('Unauthorized: Token expired')
+            res.status(httpStatus.UNAUTHORIZED).send('Unauthorized: Token expired')
             return
           }
 
@@ -69,21 +70,21 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
           })) as MaybeUser
 
           if (!user) {
-            res.status(404).send('User not Found')
+            res.status(httpStatus.NOT_FOUND).send('User not Found')
             return
           }
 
           const session = user.oAuth.sessions?.find(ses => ses.id === sessionId)
 
           if (!session) {
-            res.status(404).send('No active session found')
+            res.status(httpStatus.NOT_FOUND).send('No active session found')
             return
           }
 
           const sessionAppId = typeof session.app === 'string' ? session.app : session.app.id
 
           if (sessionAppId !== client.id) {
-            res.status(401).send('Unauthorized: Invalid client credentials')
+            res.status(httpStatus.UNAUTHORIZED).send('Unauthorized: Invalid client credentials')
             return
           }
 
@@ -103,7 +104,7 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
           const message = String(error).includes('Invalid initialization vector')
             ? 'Bad Request: Refresh Token not valid'
             : (error as any)?.message || 'Internal Server Error'
-          res.status(500).send(message)
+          res.status(httpStatus.INTERNAL_SERVER_ERROR).send(message)
         }
       },
     },

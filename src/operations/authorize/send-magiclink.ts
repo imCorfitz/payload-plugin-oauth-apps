@@ -10,7 +10,7 @@ import generateAuthCode from '../../utils/generate-auth-code'
 
 export interface Result {
   exp?: number
-  token?: string
+  code?: string
   verificationPhrase?: string
 }
 
@@ -88,7 +88,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
     ).getTime() // 2 hours
 
     const token = payload.encrypt(`${user.id}::${authCode}::${exp}::${client.id}`)
-    const magiclink = `${payload.config.serverURL}?email=${user.email}&token=${token}`
+    const magiclink = `${payload.config.serverURL}/api/${collectionConfig.slug}/oauth/verify?email=${user.email}&token=${token}`
 
     let html = `<p>We have received a login attempt with the following code:</p>
     <p style="font-weight: bold; text-align: center; padding: 4px; background-color: #eaeaea;">${verificationPhrase}</p>
@@ -141,7 +141,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
     if (shouldCommit && req.transactionID) await payload.db.commitTransaction?.(req.transactionID)
 
     return {
-      token: authCode,
+      code: authCode,
       exp,
       verificationPhrase,
     }

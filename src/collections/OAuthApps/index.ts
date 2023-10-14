@@ -82,7 +82,7 @@ export const OAuthApps: CollectionConfig = {
       required: true,
       admin: {
         description:
-          'When using magiclink, this is the URL that the user will be redirected to after they have authenticated. The callback URL will receive a query parameter called `token` which can be used in exchange for an access and refresh token.',
+          'When using magiclink, this is the URL that the user will be redirected to after they have authenticated.',
       },
     },
     {

@@ -1,3 +1,4 @@
+import httpStatus from 'http-status'
 import type { Endpoint } from 'payload/config'
 
 import type { OperationConfig } from '../../types'
@@ -29,14 +30,14 @@ export const authorize: (config: OperationConfig) => Endpoint[] = config => {
           const methodIsSupported = Object.keys(authHandlers).includes(method)
 
           if (!methodIsSupported) {
-            res.status(400).send('Bad Request: Invalid authorization method')
+            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Invalid authorization method')
             return
           }
 
           const authHandler = authHandlers[method as keyof typeof authHandlers]
 
           if (!authHandler) {
-            res.status(400).send('Bad Request: Invalid authorization method')
+            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Invalid authorization method')
             return
           }
 

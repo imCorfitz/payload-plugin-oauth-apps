@@ -1,7 +1,7 @@
 import httpStatus from 'http-status'
 import type { PayloadHandler } from 'payload/config'
 
-import verifyOtp from '../../../operations/verify/otp'
+import verifyCode from '../../../operations/verify/code'
 import type { OperationConfig } from '../../../types'
 import verifyClientCredentials from '../../../utils/verify-client-credentials'
 
@@ -11,15 +11,15 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
 
     const collection = payload.collections[config.endpointCollection.slug]
 
-    const { otp, email, clientId, clientSecret } = req.body as {
-      otp?: string
+    const { code, email, clientId, clientSecret } = req.body as {
+      code?: string
       email?: string
       clientId?: string
       clientSecret?: string
     }
 
-    if (!otp) {
-      res.status(httpStatus.BAD_REQUEST).send('Bad Request: Missing OTP')
+    if (!code) {
+      res.status(httpStatus.BAD_REQUEST).send('Bad Request: Missing code')
       return
     }
 
@@ -41,12 +41,12 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
       return
     }
 
-    const result = await verifyOtp({
+    const result = await verifyCode({
       collection,
       req,
       data: {
         email,
-        otp,
+        code,
       },
       res: res as unknown as Response,
       client,

@@ -1,7 +1,6 @@
 # To Do
 
 - [ ] Create magiclink auth flow
-- [ ] Add custom generate security pass phrase function
 - [ ] Overwrite Graphql APIs / Introduce new ones
   - [ ] Login
   - [ ] Logout

@@ -1,3 +1,4 @@
+import httpStatus from 'http-status'
 import isLocked from 'payload/dist/auth/isLocked'
 import unlock from 'payload/dist/auth/operations/unlock'
 import { authenticateLocalStrategy } from 'payload/dist/auth/strategies/local/authenticate'
@@ -105,7 +106,7 @@ async function login(incomingArgs: Arguments): Promise<Result> {
     })
 
     if (!refreshData) {
-      throw new APIError('Unable to generate refresh token')
+      throw new APIError('Unable to generate refresh token', httpStatus.INTERNAL_SERVER_ERROR)
     }
 
     const { expiresIn, accessToken } = generateAccessToken({

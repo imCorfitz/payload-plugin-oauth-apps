@@ -22,7 +22,7 @@ export interface Arguments {
   collection: Collection
   data: {
     email: string
-    otp: string
+    code: string
   }
   req: PayloadRequest
   res?: Response
@@ -30,7 +30,7 @@ export interface Arguments {
   client: OAuthApp
 }
 
-async function verifyOtp(incomingArgs: Arguments): Promise<Result> {
+async function verifyCode(incomingArgs: Arguments): Promise<Result> {
   let args = incomingArgs
 
   const {
@@ -45,7 +45,7 @@ async function verifyOtp(incomingArgs: Arguments): Promise<Result> {
   try {
     const shouldCommit = await initTransaction(req)
 
-    const { email: unsanitizedEmail, otp } = data
+    const { email: unsanitizedEmail, code } = data
 
     const email = unsanitizedEmail.toLowerCase().trim()
 
@@ -63,17 +63,17 @@ async function verifyOtp(incomingArgs: Arguments): Promise<Result> {
       throw new LockedAuth(req.t)
     }
 
-    const otps = JSON.parse(user.oAuth._otp || '[]').filter(
-      (o: { exp: number }) => o.exp > Date.now(), // Remove expired OTPs
+    const magiclinks = JSON.parse(user.oAuth._magiclinks || '[]').filter(
+      (o: { exp: number }) => o.exp > Date.now(), // Remove expired Magic Links
     )
 
-    const otpIndex = otps.findIndex((o: { otp: string }) => o.otp === otp)
+    const linkIndex = magiclinks.findIndex((o: { code: string }) => o.code === code)
 
-    if (otpIndex === -1) {
-      throw new APIError('Invalid OTP', httpStatus.UNAUTHORIZED)
+    if (linkIndex === -1) {
+      throw new APIError('Invalid token', httpStatus.UNAUTHORIZED)
     }
 
-    const remainingOTPs = otps.filter((o: { otp: string }) => o.otp !== otp)
+    const remainingMagiclinks = magiclinks.filter((o: { code: string }) => o.code !== code)
 
     user = (await payload.update({
       id: user.id,
@@ -82,7 +82,7 @@ async function verifyOtp(incomingArgs: Arguments): Promise<Result> {
       data: {
         oAuth: {
           ...user.oAuth,
-          _otp: JSON.stringify(remainingOTPs),
+          _magiclinks: JSON.stringify(remainingMagiclinks),
         },
       },
     })) as GenericUser
@@ -139,4 +139,4 @@ async function verifyOtp(incomingArgs: Arguments): Promise<Result> {
   }
 }
 
-export default verifyOtp
+export default verifyCode

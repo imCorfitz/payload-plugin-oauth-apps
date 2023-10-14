@@ -50,6 +50,7 @@ export interface PluginConfig {
 export interface GenericUser extends User {
   oAuth: {
     _otp?: string
+    _magiclinks?: string
     sessions?: Array<{
       app: string | { id: string }
       userAgent?: string
