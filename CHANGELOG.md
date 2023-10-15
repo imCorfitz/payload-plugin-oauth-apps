@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- 4452901: Migrating plugin codebase to payload plugin template to meet standards
+
 ## 0.2.0
 
 ### Minor Changes
