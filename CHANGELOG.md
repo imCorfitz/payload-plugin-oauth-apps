@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0
+
+### Minor Changes
+
+- 2e62c9e: Removing cookies from plugin feature
+- eb7abb6: Added logout route and operation
+- 9108754: Using email settings from Oauth client settings instead of plugin config
+- f81c4f5: Added magiclink auth flow
+
 ## 0.1.4
 
 ### Patch Changes
