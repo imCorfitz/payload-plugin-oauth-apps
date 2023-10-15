@@ -1,3 +1,8 @@
+/**
+ * This is copied from the txtgen package, which caused errors when trying to import it.
+ * https://github.com/ndaidong/txtgen
+ */
+
 // main
 
 import { phrases, sentenceTemplates } from './sample'
