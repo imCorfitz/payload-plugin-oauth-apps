@@ -36,6 +36,7 @@ async function login(incomingArgs: Arguments): Promise<Result> {
   let args = incomingArgs
 
   const {
+    collection,
     collection: { config: collectionConfig },
     req,
     req: { payload },
@@ -51,7 +52,7 @@ async function login(incomingArgs: Arguments): Promise<Result> {
 
     const email = unsanitizedEmail.toLowerCase().trim()
 
-    let user = await payload.db.findOne<any>({
+    let user = await payload.db.findOne({
       collection: collectionConfig.slug,
       req,
       where: { email: { equals: email.toLowerCase() } },
@@ -86,9 +87,7 @@ async function login(incomingArgs: Arguments): Promise<Result> {
 
     if (maxLoginAttemptsEnabled) {
       await unlock({
-        collection: {
-          config: collectionConfig,
-        },
+        collection,
         data: {
           email,
         },

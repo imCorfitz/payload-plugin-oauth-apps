@@ -39,7 +39,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<void> {
 
     const email = unsanitizedEmail.toLowerCase().trim()
 
-    let user = await payload.db.findOne<any>({
+    let user = await payload.db.findOne({
       collection: collectionConfig.slug,
       req,
       where: { email: { equals: email.toLowerCase() } },

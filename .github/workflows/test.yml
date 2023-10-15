@@ -1,8 +1,10 @@
-name: Publish New Version
+name: Test
 
 on:
-  release:
-    types: [created]
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -14,8 +16,5 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
+      - run: cd dev && yarn install
       - run: yarn test
-      - run: yarn build
-      - run: yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

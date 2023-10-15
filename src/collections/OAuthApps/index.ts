@@ -108,7 +108,7 @@ export const OAuthApps: CollectionConfig = {
             create: () => false,
             update: () => false,
           },
-          defaultValue: `CID_${generate()}`,
+          defaultValue: `CI_${generate()}`,
           admin: {
             readOnly: true,
           },

@@ -1,9 +1,9 @@
 import type { GroupField } from 'payload/types'
 
 import { isSelfFieldLevel } from '../access/is-self'
-import type { PluginConfig } from '../types'
+import type { PluginTypes } from '../types'
 
-export const OAuthGroup: (pluginConfig: PluginConfig) => GroupField = pluginConfig => {
+export const OAuthGroup: (pluginConfig: PluginTypes) => GroupField = pluginConfig => {
   return {
     type: 'group',
     name: 'oAuth',
