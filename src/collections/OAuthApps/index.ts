@@ -82,23 +82,8 @@ export const OAuthApps: CollectionConfig = {
       required: true,
       admin: {
         description:
-          'When using magiclink, this is the URL that the user will be redirected to after they have authenticated. The callback URL will receive a query parameter called `token` which can be used in exchange for an access and refresh token.',
+          'When using magiclink, this is the URL that the user will be redirected to after they have authenticated.',
       },
-    },
-    {
-      type: 'row',
-      fields: [
-        {
-          type: 'checkbox',
-          name: 'enableCookies',
-          label: 'Enable Cookies',
-          defaultValue: false,
-          admin: {
-            description:
-              'This will create responsoe cookies when the user authenticates as well as add the hostname to the list of allowed origins for CSRF.',
-          },
-        },
-      ],
     },
     {
       type: 'group',
@@ -141,6 +126,67 @@ export const OAuthApps: CollectionConfig = {
           admin: {
             readOnly: true,
             description: 'This will only be shown once, so make sure to save it somewhere safe.',
+          },
+        },
+      ],
+    },
+    {
+      type: 'group',
+      name: 'settings',
+      label: 'Settings',
+      fields: [
+        {
+          type: 'checkbox',
+          name: 'customizeOtpEmail',
+          label: 'Customize OTP Email',
+          defaultValue: false,
+        },
+        {
+          type: 'text',
+          name: 'otpEmailSubject',
+          label: 'OTP Email Subject',
+          admin: {
+            condition: (_, siblingData) => siblingData?.customizeOtpEmail,
+            description:
+              'This is the subject that will be sent in the email when using OTP authentication. You have access to the variables `{{otp}}` and `{{email}}` - and any additional variables made available by the administrator.',
+          },
+        },
+        {
+          type: 'code',
+          name: 'otpEmail',
+          label: 'OTP Email',
+          admin: {
+            language: 'html',
+            condition: (_, siblingData) => siblingData?.customizeOtpEmail,
+            description:
+              'This is the HTML that will be sent in the email when using OTP authentication. You have access to the variables `{{otp}}` and `{{email}}` - and any additional variables made available by the administrator.',
+          },
+        },
+        {
+          type: 'checkbox',
+          name: 'customizeMagiclinkEmail',
+          label: 'Customize Magiclink Email',
+          defaultValue: false,
+        },
+        {
+          type: 'text',
+          name: 'magiclinkEmailSubject',
+          label: 'Magiclink Email Subject',
+          admin: {
+            condition: (_, siblingData) => siblingData?.customizeMagiclinkEmail,
+            description:
+              'This is the subject that will be sent in the email when using magiclink authentication. You have access to the variables `{{magiclink}}` and `{{email}}` - and any additional variables made available by the administrator.',
+          },
+        },
+        {
+          type: 'code',
+          name: 'magiclinkEmail',
+          label: 'Magiclink Email',
+          admin: {
+            language: 'html',
+            condition: (_, siblingData) => siblingData?.customizeMagiclinkEmail,
+            description:
+              'This is the HTML that will be sent in the email when using magiclink authentication. You have access to the variables `{{magiclink}}` and `{{email}}` - and any additional variables made available by the administrator.',
           },
         },
       ],

@@ -1,22 +1,21 @@
+import httpStatus from 'http-status'
 import type { Endpoint } from 'payload/config'
-import type { IncomingAuthType } from 'payload/dist/auth'
-import getCookieExpiration from 'payload/dist/utilities/getCookieExpiration'
 
 import generateAccessToken from '../../token/generate-access-token'
-import type { EndpointConfig, MaybeUser } from '../../types'
+import type { MaybeUser, OperationConfig } from '../../types'
 import verifyClientCredentials from '../../utils/verify-client-credentials'
 
-export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
+export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
   return [
     {
       path: '/oauth/refresh-token',
       method: 'post',
       async handler(req, res) {
         try {
-          const { headers, payload } = req
+          const { payload } = req
 
           const {
-            refreshToken: rftoken,
+            refreshToken: token,
             clientId,
             clientSecret,
           } = req.body as {
@@ -26,7 +25,7 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
           }
 
           if (!clientId || !clientSecret) {
-            res.status(400).send('Bad Request: Missing client credentials')
+            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Missing client credentials')
             return
           }
 
@@ -34,24 +33,12 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
           const client = await verifyClientCredentials(clientId, clientSecret, payload)
 
           if (!client) {
-            res.status(401).send('Unauthorized: Invalid client credentials')
+            res.status(httpStatus.UNAUTHORIZED).send('Unauthorized: Invalid client credentials')
             return
           }
 
-          const cookies: Array<{ name: string; value: string }> | undefined = headers.cookie
-            ?.split(';')
-            .map((cookie: string) => cookie.trim())
-            .map((cookie: string) => {
-              const [name, value] = cookie.split('=')
-              return { name, value }
-            })
-
-          const token =
-            rftoken ||
-            cookies?.find(cookie => cookie.name === `${payload.config.cookiePrefix}-refresh`)?.value
-
           if (!token) {
-            res.status(400).send('Bad Request: Missing refresh token')
+            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Missing refresh token')
             return
           }
 
@@ -60,7 +47,7 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
           const expiresAt = new Date(Number(expiration))
 
           if (expiresAt < new Date(Date.now())) {
-            res.status(401).send('Unauthorized: Token expired')
+            res.status(httpStatus.UNAUTHORIZED).send('Unauthorized: Token expired')
             return
           }
 
@@ -71,21 +58,21 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
           })) as MaybeUser
 
           if (!user) {
-            res.status(404).send('User not Found')
+            res.status(httpStatus.NOT_FOUND).send('User not Found')
             return
           }
 
           const session = user.oAuth.sessions?.find(ses => ses.id === sessionId)
 
           if (!session) {
-            res.status(404).send('No active session found')
+            res.status(httpStatus.NOT_FOUND).send('No active session found')
             return
           }
 
           const sessionAppId = typeof session.app === 'string' ? session.app : session.app.id
 
           if (sessionAppId !== client.id) {
-            res.status(401).send('Unauthorized: Invalid client credentials')
+            res.status(httpStatus.UNAUTHORIZED).send('Unauthorized: Invalid client credentials')
             return
           }
 
@@ -96,30 +83,16 @@ export const refreshToken: (config: EndpointConfig) => Endpoint[] = config => {
             sessionId,
           })
 
-          const collectionAuthConfig = config.endpointCollection.auth as IncomingAuthType
-
-          if (client.enableCookies) {
-            // Set cookie
-            res.cookie(`${payload.config.cookiePrefix}-token`, accessToken, {
-              path: '/',
-              httpOnly: true,
-              expires: getCookieExpiration(collectionAuthConfig.tokenExpiration || 60 * 60),
-              secure: collectionAuthConfig.cookies?.secure,
-              sameSite: collectionAuthConfig.cookies?.sameSite,
-              domain: collectionAuthConfig.cookies?.domain || undefined,
-            })
-          }
-
           res.send({
             accessToken,
             accessExpiration: expiresIn,
           })
-        } catch (error) {
-          // req.payload.logger.error(error)
+        } catch (error: unknown) {
+          req.payload.logger.error(error)
           const message = String(error).includes('Invalid initialization vector')
             ? 'Bad Request: Refresh Token not valid'
-            : 'Internal Server Error'
-          res.status(500).send(message)
+            : (error as any)?.message || 'Internal Server Error'
+          res.status(httpStatus.INTERNAL_SERVER_ERROR).send(message)
         }
       },
     },

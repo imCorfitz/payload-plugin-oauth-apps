@@ -1,7 +1,7 @@
 import APIError from 'payload/dist/errors/APIError'
 import type { Collection, CollectionBeforeOperationHook, PayloadRequest } from 'payload/types'
 
-import type { EndpointConfig } from '../types'
+import type { OperationConfig } from '../types'
 
 export interface Arguments {
   collection: Collection
@@ -10,7 +10,7 @@ export interface Arguments {
   token: string
 }
 
-export const beforeLoginOperationHook: (config: EndpointConfig) => CollectionBeforeOperationHook =
+export const beforeLoginOperationHook: (config: OperationConfig) => CollectionBeforeOperationHook =
   () =>
   ({
     args, // original arguments passed into the operation

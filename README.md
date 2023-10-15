@@ -17,9 +17,8 @@
 - Ability to create multiple `OAuth Apps` with individual client credentials
 - Better session flow using revokable longer-lived `refresh tokens`
 - `Session management` on User collections with ability to revoke active sessions
-- `Passwordless authentication` using One-time password (OTP) or Magiclink (Coming soon)
+- `Passwordless authentication` using One-time password (OTP) or Magiclink
 - Automatically adds registered OAuth apps to `CSRF` and `CORS` config in Payload
-- Full support of native Payload Auth cookies and JWT passport strategy
 
 ## Installation
 
@@ -70,24 +69,23 @@ export default buildConfig({
 
 - `authorization`: object | optional
 
-  Configure how `OAuth Apps` authorize users and initialize new sessions. The default `method` is 'crednetials'.
+  Configure how `OAuth Apps` authorize users and initialize new sessions.
 
-  - `method`: 'credentials' | 'otp' | 'magiclink' | 'custom' | optional
-  - `customHandler`: EndpointHandler | optional
+  - `customHandlers`: {<custom_method>: EndpointHandler} | optional
   - `otpExpiration`: number | optional
   - `generateOTP`: method | optional
-  - `generateEmailHTML`: method | optional
-  - `generateEmailSubject`: method | optional
+  - `generateEmailVariables`: method | optional
 
   When using `otp` and authorization method, you can set the expiration (`otpExpiration` - defaults to 10 minutes) and customise how you want the one-time password to be generated (`generateOTP` - defaults to generating a 6-digit number).
 
-  Both `magiclink` (Coming soon) and `otp` allows you to set the `generateEmailHTML` and `generateEmailSubject` methods to customise the email sent to the user for authentication. In both method you will have access to following properties:
+  Both `magiclink` and `otp` allows you to set the `generateEmailVariables` method to customise the email variables available in the OAuth App settings. In both method you will have access to following properties:
 
   - `req`: PayloadRequest
-  - `token`: The generated OTP or an encrypted token depending on the set method
+  - `variables`: An object containing a magiclink and token, or an OTP, depending on the `method`
   - `user`: Information about the user to be authenticated
+  - `client`: Details about the OAuth App making the auth request
 
-  > Note: `customHandler` should be set if `method` is set to 'custom' and allows you to perform the entire authentication flow yourself. Note that the plugin does expose the generateAccessToken and generateRefreshToken methods, however this goes beyond the scope of this documentation, and should be used in advance cases only.
+  > Note: `customHandlers` should be set if you wish to create your own `method` and allows you to perform the entire authentication flow yourself. Note that the plugin does expose the generateAccessToken and generateRefreshToken methods, however this goes beyond the scope of this documentation, and should be used in advance cases only.
 
 - `sessions`: object | optional
 
@@ -138,22 +136,24 @@ const Admins: CollectionConfig = {
 
 - [POST] `oauth/authorize`:
 
-  Used by OAuth apps to log in users. Upon sucessful login, the response will contain an access token and a refresh token.
+  Used by OAuth apps to log in users. Upon sucessful login, the response will contain an access token and a refresh token. By passing `method` as part of the body, you can tell Payload CMS how you wish to authenticate the user. The plugin support `credentials`, `otp`, and `magiclink` out of the box.
 
   > Note: Don't ever expose your client id or client secret to the client. These operations should always be made securely from server-side.
 
   | Parameter               | Description                                                                                                  |
   | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
-  | email `required`        | The email address of the user to be logged in.                                                               |
-  | password                | The password of the user to be logged in. _NB: `required` if `authorization.method` is set to 'credentials'_ |
+  | email `required`        | The email address of the user to be logged in                                                                |
   | clientId `required`     | The client id of the OAuth App performing the operation                                                      |
   | clientSecret `required` | The client secret of the OAuth App performing the operation                                                  |
+  | method                  | `'credentials' \| 'otp' \| 'magiclink' \| <custom_method>.` The default `method` is 'credentials'            |
+  | password                | The password of the user to be logged in. _NB: `required` if `authorization.method` is set to 'credentials'_ |
 
   ```ts
   // Request
   const response = await fetch(`https://my.payloadcms.tld/<user-collection>/oauth/authorize`, {
     method: 'POST',
     body: JSON.stringify({
+      method: "credentials",
       email: "user@payloadcms.com",
       password: "very-safe-password-1234",
       clientId: "CID_s3o8y384y5...",
@@ -176,11 +176,11 @@ const Admins: CollectionConfig = {
 
   > Note: Don't ever expose your client id or client secret to the client. These operations should always be made securely from server-side.
 
-  | Parameter               | Description                                                                                                                          |
-  | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-  | refreshToken            | Only `required` if cookie authentication isn't enable for the OAuth app. Otherwise passing the cookies with the request will suffice |
-  | clientId `required`     | The client id of the OAuth App performing the operation                                                                              |
-  | clientSecret `required` | The client secret of the OAuth App performing the operation                                                                          |
+  | Parameter               | Description                                                 |
+  | ----------------------- | ----------------------------------------------------------- |
+  | refreshToken `required` | The refresh token issued at authorization                   |
+  | clientId `required`     | The client id of the OAuth App performing the operation     |
+  | clientSecret `required` | The client secret of the OAuth App performing the operation |
 
   ```ts
   // Request
@@ -202,13 +202,13 @@ const Admins: CollectionConfig = {
 
 - [POST] `oauth/verify-otp`:
 
-  When `authorization.method` is set to 'otp', the user will receive an email with a one-time password. Use this endpoint to finalize the authentication process and receive an access and refresh token.
+  When `method` is set to 'otp', the user will receive an email with a one-time password. Use this endpoint to finalize the authentication process and receive an access and refresh token.
 
   > Note: Don't ever expose your client id or client secret to the client. These operations should always be made securely from server-side.
 
   | Parameter               | Description                                                 |
   | ----------------------- | ----------------------------------------------------------- |
-  | email `required`        | The email address of the user to be logged in.              |
+  | email `required`        | The email address of the user to be logged in               |
   | otp `required`          | The one-time password received by the user by email         |
   | clientId `required`     | The client id of the OAuth App performing the operation     |
   | clientSecret `required` | The client secret of the OAuth App performing the operation |
@@ -220,6 +220,56 @@ const Admins: CollectionConfig = {
     body: JSON.stringify({
       email: "user@payloadcms.com",
       otp: "123456",
+      clientId: "CID_s3o8y384y5...",
+      clientSecret: "CS_skijorintg..."
+    })
+  })
+
+  // Successful Response
+  {
+    "accessToken": "eyJhbGciOiJIUzI1N...XMnxpb1NTK9K0",
+    "accessExpiration": 3600,
+    "refreshToken": "43d5cc1ee66ac880...94b8f2df",
+    "refreshExpiration": 2592000
+  }
+  ```
+
+- [GET] `oauth/verify-magiclink`:
+
+  When `method` is set to 'magiclink', the user will receive an email with a link. The link is directing the user to this endpoint by default (if not overridden in OAuth App settings). When validated, the user will be redirected to the callbackUrl registered for the OAuth App.
+
+  | Query Parameter  | Description                             |
+  | ---------------- | --------------------------------------- |
+  | token `required` | The token received by the user by email |
+
+- [POST] `oauth/verify-magiclink`:
+
+  Same endpoint can also be used by an OAuth app to post the user's token for validation. Same process applies, but instead of a redirect, the call will output a JSON object with the status of the validation.
+
+  | Parameter        | Description                             |
+  | ---------------- | --------------------------------------- |
+  | token `required` | The token received by the user by email |
+
+- [POST] `oauth/verify-code`:
+
+  When `method` is set to 'magiclink' and the user has clicked the link they've received calling this endpoint with the code received at the authentication call, this endpoint will verify your code and finalize the authentication process and issue an access and refresh token.
+
+  > Note: Don't ever expose your client id or client secret to the client. These operations should always be made securely from server-side.
+
+  | Parameter               | Description                                                 |
+  | ----------------------- | ----------------------------------------------------------- |
+  | email `required`        | The email address of the user to be logged in               |
+  | code `required`         | The code received during authentication call                |
+  | clientId `required`     | The client id of the OAuth App performing the operation     |
+  | clientSecret `required` | The client secret of the OAuth App performing the operation |
+
+  ```ts
+  // Request
+  const response = await fetch(`https://my.payloadcms.tld/<user-collection>/oauth/verify-code`, {
+    method: 'POST',
+    body: JSON.stringify({
+      email: "user@payloadcms.com",
+      code: "AbCdEf123456",
       clientId: "CID_s3o8y384y5...",
       clientSecret: "CS_skijorintg..."
     })

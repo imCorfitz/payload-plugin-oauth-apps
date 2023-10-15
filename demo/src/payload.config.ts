@@ -1,24 +1,24 @@
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
-import { slateEditor } from '@payloadcms/richtext-slate'
-import { webpackBundler } from '@payloadcms/bundler-webpack'
-import { buildConfig } from 'payload/config'
-import path from 'path'
+import { mongooseAdapter } from "@payloadcms/db-mongodb";
+import { slateEditor } from "@payloadcms/richtext-slate";
+import { webpackBundler } from "@payloadcms/bundler-webpack";
+import { buildConfig } from "payload/config";
+import path from "path";
 // import Examples from './collections/Examples';
-import Users from './collections/Users'
+import Users from "./collections/Users";
 
 // import { oAuthApps } from '../../dist';
 // eslint-disable-next-line import/no-relative-packages
-import { oAuthApps } from '../../src'
+import { oAuthApps } from "../../src";
 
 export default buildConfig({
-  serverURL: 'http://localhost:3030',
+  serverURL: "http://localhost:3030",
   admin: {
     user: Users.slug,
     bundler: webpackBundler(),
   },
   email: {
-    fromName: 'Admin',
-    fromAddress: 'admin@example.com',
+    fromName: "Admin",
+    fromAddress: "admin@example.com",
     logMockCredentials: true, // Optional
   },
   editor: slateEditor({}),
@@ -30,10 +30,10 @@ export default buildConfig({
     // Examples,
   ],
   typescript: {
-    outputFile: path.resolve(__dirname, 'payload-types.ts'),
+    outputFile: path.resolve(__dirname, "payload-types.ts"),
   },
   graphQL: {
-    schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
+    schemaOutputFile: path.resolve(__dirname, "generated-schema.graphql"),
   },
   db: mongooseAdapter({
     url: process.env.MONGODB_URI,
@@ -41,13 +41,15 @@ export default buildConfig({
   plugins: [
     oAuthApps({
       userCollections: [Users.slug],
+      // authorization: {
+      //   generateEmailVariables: () => ({
+      //     test: "testing a longer sentence.. Maybe wiht emojies? 🤣",
+      //   }),
+      // },
       sessions: {
         limit: 4,
         ipinfoApiKey: process.env.IPINFO_API_KEY,
       },
-      // authorization: {
-      //   method: "otp",
-      // },
       access: {
         sessions: {
           read: () => true,
@@ -56,4 +58,4 @@ export default buildConfig({
       },
     }),
   ],
-})
+});

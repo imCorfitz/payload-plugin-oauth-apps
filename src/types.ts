@@ -13,20 +13,28 @@ export interface PluginConfig {
     }
   }
   authorization?: {
-    method?: 'credentials' | 'otp' | 'magiclink' | 'custom'
-    customHandler?: EndpointHandler
+    customHandlers?: Record<string, EndpointHandler>
     otpExpiration?: number
     generateOTP?: (args?: { req?: PayloadRequest; user?: unknown }) => string | Promise<string>
-    generateEmailHTML?: (args?: {
+    generateEmailVariables?: (args?: {
       req?: PayloadRequest
-      token?: string
+      variables?:
+        | {
+            __method: 'magiclink'
+            token?: string
+            magiclink?: string
+          }
+        | {
+            __method: 'otp'
+            otp?: string
+          }
       user?: unknown
-    }) => string | Promise<string>
-    generateEmailSubject?: (args?: {
-      req?: PayloadRequest
-      token?: string
-      user?: unknown
-    }) => string | Promise<string>
+      client?: Omit<OAuthApp, 'credentials' | 'id'>
+    }) => Record<string, string> | Promise<Record<string, string>>
+    magicLinkExpiration?: number
+    verificationPhraseTemplate?: string
+    verificationPhraseNouns?: string[]
+    verificationPhraseAdjectives?: string[]
   }
   sessions?: {
     limit?: number
@@ -42,6 +50,7 @@ export interface PluginConfig {
 export interface GenericUser extends User {
   oAuth: {
     _otp?: string
+    _magiclinks?: string
     sessions?: Array<{
       app: string | { id: string }
       userAgent?: string
@@ -61,15 +70,22 @@ export interface OAuthApp {
   description: string
   homepageUrl: string
   callbackUrl: string
-  enableCookies: boolean
   credentials?: {
     clientId?: string
     clientSecret?: string
   }
+  settings?: {
+    customizeOtpEmail?: boolean
+    otpEmail?: string
+    otpEmailSubject?: string
+    customizeMagiclinkEmail?: boolean
+    magiclinkEmail?: string
+    magiclinkEmailSubject?: string
+  }
 }
 
-export interface EndpointConfig extends PluginConfig {
+export interface OperationConfig extends PluginConfig {
   endpointCollection: CollectionConfig
 }
 
-export type EndpointHandler = (config: EndpointConfig) => PayloadHandler | PayloadHandler[]
+export type EndpointHandler = (config: OperationConfig) => PayloadHandler | PayloadHandler[]

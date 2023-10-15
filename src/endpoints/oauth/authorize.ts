@@ -1,6 +1,7 @@
+import httpStatus from 'http-status'
 import type { Endpoint } from 'payload/config'
 
-import type { EndpointConfig, EndpointHandler } from '../../types'
+import type { OperationConfig } from '../../types'
 import credentials from '../handlers/authorize/credentials'
 import magiclink from '../handlers/authorize/magiclink'
 import otp from '../handlers/authorize/otp'
@@ -11,26 +12,40 @@ const handlers = {
   magiclink,
 }
 
-export const authorize: (endpointConfig: EndpointConfig) => Endpoint[] = endpointConfig => {
-  const authMethod = endpointConfig.authorization?.method || 'credentials'
-
-  let handler: EndpointHandler | undefined
-
-  if (authMethod === 'custom') {
-    handler = endpointConfig.authorization?.customHandler
-  } else {
-    handler = handlers[authMethod]
-  }
-
-  if (!handler) {
-    throw new Error(`No handler found for authorization method: ${authMethod}`)
-  }
-
+export const authorize: (config: OperationConfig) => Endpoint[] = config => {
   return [
     {
       path: '/oauth/authorize',
       method: 'post',
-      handler: handler(endpointConfig),
+      async handler(req, res, next) {
+        try {
+          const { method: requestedMethod } = req.body as {
+            method?: string
+          }
+
+          const method = requestedMethod || 'credentials'
+
+          const authHandlers = { ...handlers, ...config.authorization?.customHandlers }
+
+          const methodIsSupported = Object.keys(authHandlers).includes(method)
+
+          if (!methodIsSupported) {
+            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Invalid authorization method')
+            return
+          }
+
+          const authHandler = authHandlers[method as keyof typeof authHandlers]
+
+          if (!authHandler) {
+            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Invalid authorization method')
+            return
+          }
+
+          return authHandler(config)(req, res, next)
+        } catch (error) {
+          next(error)
+        }
+      },
     },
   ]
 }
