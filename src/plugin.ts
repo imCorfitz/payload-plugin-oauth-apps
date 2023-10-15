@@ -10,7 +10,6 @@ import { beforeRefreshOperationHook } from './hooks/before-refresh'
 import type { OperationConfig, PluginTypes } from './types'
 import { extendWebpackConfig } from './webpack'
 import { onInitExtension } from './onInitExtension'
-import AfterDashboard from './components/AfterDashboard'
 
 export const oAuthApps =
   (pluginOptions: PluginTypes) =>
@@ -21,17 +20,7 @@ export const oAuthApps =
 
     config.admin = {
       ...(config.admin || {}),
-      // If you extended the webpack config, add it back in here
-      // If you did not extend the webpack config, you can remove this line
       webpack,
-
-      // Add additional admin config here
-
-      components: {
-        ...(config.admin?.components || {}),
-        // Add additional admin components here
-        afterDashboard: [...(config.admin?.components?.afterDashboard || []), AfterDashboard],
-      },
     }
 
     // If the plugin is disabled, return the config without modifying it
