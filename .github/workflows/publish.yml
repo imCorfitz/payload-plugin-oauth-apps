@@ -1,21 +1,30 @@
 name: Publish New Version
 
 on:
-  release:
-    types: [created]
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+  push:
+    branches: [master]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "16.x"
+          registry-url: "https://registry.npmjs.org"
       - run: yarn install
       - run: yarn test
-      - run: yarn build
-      - run: yarn publish
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: yarn release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

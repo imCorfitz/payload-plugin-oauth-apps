@@ -15,6 +15,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint --fix --ext .ts,.tsx src",
     "clean": "rimraf dist && rimraf dev/yarn.lock",
+    "release": "yarn build && changeset publish",
     "prepublishOnly": "yarn clean && yarn build && cd dev && yarn test"
   },
   "keywords": [
