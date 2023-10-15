@@ -3,7 +3,11 @@ import type { PayloadRequest } from 'payload/types'
 
 import type { OAuthApp } from '../../types'
 
-export default async function oAuthCsrf(req: PayloadRequest, _res: Response, next: NextFunction) {
+export default async function oAuthCsrf(
+  req: PayloadRequest,
+  _res: Response,
+  next: NextFunction,
+): Promise<void> {
   const { payload } = req
 
   const config = payload.config

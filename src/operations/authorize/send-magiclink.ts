@@ -5,7 +5,8 @@ import { killTransaction } from 'payload/dist/utilities/killTransaction'
 import type { Collection, PayloadRequest } from 'payload/types'
 
 import { sentence, setAdjectives, setNouns, setTemplates } from '../../lib/txtgen'
-import type { OAuthApp, OperationConfig } from '../../types'
+import type { GenericUser } from '../../types'
+import { type OAuthApp, type OperationConfig } from '../../types'
 import generateAuthCode from '../../utils/generate-auth-code'
 
 export interface Result {
@@ -26,7 +27,7 @@ export interface Arguments {
 }
 
 async function sendOtp(incomingArgs: Arguments): Promise<Result> {
-  let args = incomingArgs
+  const args = incomingArgs
 
   const {
     collection: { config: collectionConfig },
@@ -46,7 +47,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
 
     const email = unsanitizedEmail.toLowerCase().trim()
 
-    let user = await payload.db.findOne({
+    const user = await payload.db.findOne<GenericUser>({
       collection: collectionConfig.slug,
       req,
       where: { email: { equals: email.toLowerCase() } },
@@ -56,7 +57,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
       throw new AuthenticationError(req.t)
     }
 
-    if (user && isLocked(user.lockUntil)) {
+    if (user && isLocked(Number(user.lockUntil))) {
       throw new LockedAuth(req.t)
     }
 
@@ -137,7 +138,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<Result> {
       }
     }
 
-    void sendEmail({
+    sendEmail({
       from: `"${emailOptions.fromName}" <${emailOptions.fromAddress}>`,
       to: email,
       subject,

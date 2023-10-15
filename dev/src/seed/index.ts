@@ -1,5 +1,4 @@
 import type { Payload } from 'payload'
-import generate from '../../../src/utils/generate-secret-string'
 
 export const seed = async (payload: Payload): Promise<void> => {
   payload.logger.info('Seeding data...')

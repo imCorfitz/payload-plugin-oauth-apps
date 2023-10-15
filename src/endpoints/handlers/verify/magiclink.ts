@@ -49,7 +49,7 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
     res.send({
       message: 'Magiclink verified',
     })
-  } catch (error) {
+  } catch (error: unknown) {
     next(error)
   }
 }

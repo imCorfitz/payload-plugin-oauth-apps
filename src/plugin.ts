@@ -14,7 +14,7 @@ import { onInitExtension } from './onInitExtension'
 export const oAuthApps =
   (pluginOptions: PluginTypes) =>
   (incomingConfig: Config): Config => {
-    let config = { ...incomingConfig }
+    const config = { ...incomingConfig }
 
     const webpack = extendWebpackConfig(incomingConfig)
 
@@ -30,7 +30,9 @@ export const oAuthApps =
     }
 
     config.collections = [
-      ...(config.collections || []).map(collection => {
+      ...(config.collections || []).map(col => {
+        const collection = { ...col }
+
         const { slug } = collection
 
         const isUserCollection = pluginOptions.userCollections.includes(slug)

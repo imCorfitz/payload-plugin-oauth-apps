@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable import/no-import-module-exports */
 import express from 'express'
 import type { Server } from 'http'
 import payload from 'payload'
 import path from 'path'
 import { seed } from './seed'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires -- This is required for dotenv to work
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
 const app = express()

@@ -7,7 +7,7 @@ export default async function oAuthCorsHeaders(
   req: PayloadRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   const { payload } = req
 
   const config = payload.config

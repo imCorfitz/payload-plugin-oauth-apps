@@ -5,7 +5,7 @@ import { initTransaction } from 'payload/dist/utilities/initTransaction'
 import { killTransaction } from 'payload/dist/utilities/killTransaction'
 import type { Collection, PayloadRequest } from 'payload/types'
 
-import type { MaybeUser, OperationConfig } from '../../types'
+import type { GenericUser, MaybeUser, OperationConfig } from '../../types'
 
 export interface Arguments {
   collection: Collection
@@ -19,7 +19,7 @@ export interface Arguments {
 }
 
 async function logout(incomingArgs: Arguments): Promise<void> {
-  let args = incomingArgs
+  const args = incomingArgs
 
   const {
     collection: { config: collectionConfig },
@@ -33,7 +33,8 @@ async function logout(incomingArgs: Arguments): Promise<void> {
     const shouldCommit = await initTransaction(req)
     const { accessToken, refreshToken } = data
 
-    let userId: string | undefined, sessionId: string | undefined
+    let userId: string | undefined
+    let sessionId: string | undefined
 
     if (refreshToken) {
       ;[sessionId, userId] = payload.decrypt(String(refreshToken)).split('::')
@@ -51,7 +52,7 @@ async function logout(incomingArgs: Arguments): Promise<void> {
       throw new APIError('Bad Request: Invalid token', httpStatus.BAD_REQUEST)
     }
 
-    const user = (await payload.db.findOne<any>({
+    const user = (await payload.db.findOne<GenericUser>({
       collection: collectionConfig.slug,
       req,
       where: { id: { equals: userId } },

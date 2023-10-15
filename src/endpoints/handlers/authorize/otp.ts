@@ -44,7 +44,7 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
     res.send({
       message: 'OTP sent',
     })
-  } catch (error) {
+  } catch (error: unknown) {
     next(error)
   }
 }

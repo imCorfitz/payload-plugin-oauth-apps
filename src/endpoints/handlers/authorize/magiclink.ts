@@ -45,7 +45,7 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
       ...result,
       message: 'Magiclink sent',
     })
-  } catch (error) {
+  } catch (error: unknown) {
     next(error)
   }
 }

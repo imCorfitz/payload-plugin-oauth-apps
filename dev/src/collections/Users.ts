@@ -1,5 +1,5 @@
+import type { CollectionConfig } from 'payload/types'
 import { oAuthManager } from '../../../src'
-import { CollectionConfig } from 'payload/types'
 
 const Users: CollectionConfig = {
   slug: 'users',

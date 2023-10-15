@@ -47,7 +47,7 @@ const handler: (config: OperationConfig) => PayloadHandler = config => async (re
       ...result,
       message: 'Auth Passed',
     })
-  } catch (error) {
+  } catch (error: unknown) {
     next(error)
   }
 }

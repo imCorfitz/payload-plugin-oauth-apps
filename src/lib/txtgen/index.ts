@@ -22,14 +22,14 @@ export {
 
 const actions = ['noun', 'a_noun', 'nouns', 'adjective', 'an_adjective']
 
-const trim = (s: string) => {
+const trim = (s: string): string => {
   return s
     .replace(/^[\s\xa0]+|[\s\xa0]+$/g, '')
     .replace(/\r?\n|\r/g, ' ')
     .replace(/\s\s+|\r/g, ' ')
 }
 
-const make = (template: string) => {
+const make = (template: string): string => {
   let sentence = template
   const occurrences = template.match(/\{\{(.+?)\}\}/g)
 
@@ -46,20 +46,20 @@ const make = (template: string) => {
   return sentence
 }
 
-const randomStartingPhrase = () => {
+const randomStartingPhrase = (): string => {
   if (randfloat() < 0.33) {
     return rand(phrases)
   }
   return ''
 }
 
-const makeSentenceFromTemplate = () => {
+const makeSentenceFromTemplate = (): string => {
   return make(rand(sentenceTemplates))
 }
 
 export { setRandom }
 
-export const sentence = (ignoreStartingPhrase = false, ignoreLastPunctuation = false) => {
+export const sentence = (ignoreStartingPhrase = false, ignoreLastPunctuation = false): string => {
   const phrase = ignoreStartingPhrase ? '' : randomStartingPhrase()
   let s = phrase + makeSentenceFromTemplate()
   s = s.charAt(0).toUpperCase() + s.slice(1)
@@ -69,11 +69,12 @@ export const sentence = (ignoreStartingPhrase = false, ignoreLastPunctuation = f
   return s
 }
 
-export const paragraph = (len = 0) => {
-  if (!len) {
-    len = randint(3, 10)
+export const paragraph = (len = 0): string => {
+  let length = len
+  if (!length) {
+    length = randint(3, 10)
   }
-  const t = Math.min(len, 15)
+  const t = Math.min(length, 15)
   const a = []
   while (a.length < t) {
     const s = sentence()
@@ -82,11 +83,12 @@ export const paragraph = (len = 0) => {
   return a.join(' ')
 }
 
-export const article = (len = 0) => {
-  if (!len) {
-    len = randint(3, 10)
+export const article = (len = 0): string => {
+  let length = len
+  if (!length) {
+    length = randint(3, 10)
   }
-  const t = Math.min(len, 15)
+  const t = Math.min(length, 15)
   const a = []
   while (a.length < t) {
     const s = paragraph()

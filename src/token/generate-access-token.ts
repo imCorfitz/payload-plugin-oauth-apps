@@ -11,12 +11,17 @@ interface AccessTokenProps {
   sessionId: string
 }
 
+interface AccessTokenResult {
+  accessToken: string
+  expiresIn: number
+}
+
 export default function generateAccessToken({
   user,
   payload: { secret },
   collection,
   sessionId,
-}: AccessTokenProps) {
+}: AccessTokenProps): AccessTokenResult {
   const fieldsToSign = {
     ...getFieldsToSign({
       collectionConfig: collection,
