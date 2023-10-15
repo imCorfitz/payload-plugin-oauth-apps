@@ -6,5 +6,5 @@ export type {
   MaybeUser,
   OAuthApp,
   OperationConfig,
-  PluginTypes as PluginConfig,
+  PluginTypes,
 } from './types'

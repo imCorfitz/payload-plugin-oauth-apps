@@ -3,7 +3,7 @@ import type { GroupField } from 'payload/types'
 import { isSelfFieldLevel } from '../access/is-self'
 import type { PluginTypes } from '../types'
 
-export const OAuthGroup: (pluginConfig: PluginTypes) => GroupField = pluginConfig => {
+export const OAuthGroup: (pluginOptions: PluginTypes) => GroupField = pluginOptions => {
   return {
     type: 'group',
     name: 'oAuth',
@@ -38,9 +38,9 @@ export const OAuthGroup: (pluginConfig: PluginTypes) => GroupField = pluginConfi
         name: 'sessions',
         label: 'Sessions',
         access: {
-          read: pluginConfig.access?.sessions?.read || isSelfFieldLevel,
-          create: pluginConfig.access?.sessions?.create || (() => false),
-          update: pluginConfig.access?.sessions?.update || isSelfFieldLevel,
+          read: pluginOptions.access?.sessions?.read || isSelfFieldLevel,
+          create: pluginOptions.access?.sessions?.create || (() => false),
+          update: pluginOptions.access?.sessions?.update || isSelfFieldLevel,
         },
         fields: [
           {
