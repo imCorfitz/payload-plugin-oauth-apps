@@ -2,7 +2,7 @@ name: Publish New Version
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["Test"]
     types: [completed]
   push:
     branches: [master]
