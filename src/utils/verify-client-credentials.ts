@@ -6,7 +6,7 @@ export default async function verifyClientCredentials(
   clientId: string,
   clientSecret: string,
   payload: Payload,
-) {
+): Promise<OAuthApp | null> {
   // Validate the client credentials
   const client = await payload.find({
     collection: 'oAuthApps',

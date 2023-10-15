@@ -4,7 +4,7 @@ import { initTransaction } from 'payload/dist/utilities/initTransaction'
 import { killTransaction } from 'payload/dist/utilities/killTransaction'
 import type { Collection, PayloadRequest } from 'payload/types'
 
-import type { OAuthApp, OperationConfig } from '../../types'
+import type { GenericUser, OAuthApp, OperationConfig } from '../../types'
 
 export interface Result {
   callbackUrl: string
@@ -21,7 +21,7 @@ export interface Arguments {
 }
 
 async function verifyMagiclink(incomingArgs: Arguments): Promise<Result> {
-  let args = incomingArgs
+  const args = incomingArgs
 
   const {
     collection: { config: collectionConfig },
@@ -45,11 +45,11 @@ async function verifyMagiclink(incomingArgs: Arguments): Promise<Result> {
       throw new APIError('Bad Request: Invalid token', httpStatus.BAD_REQUEST)
     }
 
-    if (parseInt(exp) < Date.now()) {
+    if (Number(exp) < Date.now()) {
       throw new APIError('Unauthorized: Expired token', httpStatus.UNAUTHORIZED)
     }
 
-    const user = await payload.db.findOne<any>({
+    const user = await payload.db.findOne<GenericUser>({
       collection: collectionConfig.slug,
       req,
       where: { id: { equals: userId } },
@@ -72,11 +72,11 @@ async function verifyMagiclink(incomingArgs: Arguments): Promise<Result> {
       throw new APIError('Unauthorized: Invalid token', httpStatus.UNAUTHORIZED)
     }
 
-    const client = (await payload.db.findOne<any>({
+    const client = await payload.db.findOne<OAuthApp>({
       collection: 'oAuthApps',
       req,
       where: { id: { equals: clientId } },
-    })) as OAuthApp
+    })
 
     if (!client) {
       throw new APIError('Unauthorized: Invalid token', httpStatus.UNAUTHORIZED)

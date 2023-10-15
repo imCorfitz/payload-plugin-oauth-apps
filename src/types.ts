@@ -3,8 +3,13 @@ import type { User } from 'payload/dist/auth'
 import type { CollectionConfig } from 'payload/dist/collections/config/types'
 import type { FieldAccess, PayloadRequest } from 'payload/types'
 
-export interface PluginConfig {
+export interface PluginTypes {
   userCollections: string[]
+  /**
+   * Enable or disable plugin
+   * @default false
+   */
+  enabled?: boolean
   access?: {
     sessions?: {
       read?: FieldAccess<{ id: string }, unknown>
@@ -23,6 +28,7 @@ export interface PluginConfig {
             __method: 'magiclink'
             token?: string
             magiclink?: string
+            verificationPhrase?: string
           }
         | {
             __method: 'otp'
@@ -84,7 +90,7 @@ export interface OAuthApp {
   }
 }
 
-export interface OperationConfig extends PluginConfig {
+export interface OperationConfig extends PluginTypes {
   endpointCollection: CollectionConfig
 }
 

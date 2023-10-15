@@ -1,5 +1,3 @@
-node_modules
-**/*.d.ts
-**/payload-types.ts
-.eslintrc.js
-demo
+# Ignore all test fiels
+**/*.spec.*
+**/*.test.*

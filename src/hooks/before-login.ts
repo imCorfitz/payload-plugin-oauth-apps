@@ -30,7 +30,6 @@ export const beforeLoginOperationHook: (config: OperationConfig) => CollectionBe
           'Only Payload CMS can perform refresh operations on this endpoint. Please refer to oauth/authorize for OAuth apps.',
           403,
         )
-
-      return args // return modified operation arguments as necessary
     }
+    return args // return modified operation arguments as necessary
   }

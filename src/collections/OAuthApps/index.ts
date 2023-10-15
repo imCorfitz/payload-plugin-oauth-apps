@@ -2,9 +2,9 @@ import type { CollectionConfig } from 'payload/types'
 
 import type { MaybeUser, OAuthApp } from '../../types'
 
-function generate() {
+function generate(): string {
   let ret = ''
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 8; i += 1) {
     const newrand = Math.floor(Math.random() * 4026531840) + 268435456
     ret += newrand.toString(16)
   }
@@ -12,9 +12,9 @@ function generate() {
 }
 
 // n times *
-const nTimes = (n: number, char: string) => {
+const nTimes = (n: number, char: string): string => {
   let ret = ''
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < n; i += 1) {
     ret += char
   }
   return ret
@@ -108,7 +108,7 @@ export const OAuthApps: CollectionConfig = {
             create: () => false,
             update: () => false,
           },
-          defaultValue: `CID_${generate()}`,
+          defaultValue: `CI_${generate()}`,
           admin: {
             readOnly: true,
           },

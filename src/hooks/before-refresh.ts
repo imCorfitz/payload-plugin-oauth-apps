@@ -32,7 +32,6 @@ export const beforeRefreshOperationHook: (
           'Only Payload CMS can perform refresh operations on this endpoint. Please refer to oauth/refresh-token for OAuth apps.',
           403,
         )
-
-      return args // return modified operation arguments as necessary
     }
+    return args // return modified operation arguments as necessary
   }

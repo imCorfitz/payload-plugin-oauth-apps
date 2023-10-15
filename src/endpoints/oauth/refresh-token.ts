@@ -10,7 +10,7 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
     {
       path: '/oauth/refresh-token',
       method: 'post',
-      async handler(req, res) {
+      async handler(req, res, next) {
         try {
           const { payload } = req
 
@@ -88,11 +88,7 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
             accessExpiration: expiresIn,
           })
         } catch (error: unknown) {
-          req.payload.logger.error(error)
-          const message = String(error).includes('Invalid initialization vector')
-            ? 'Bad Request: Refresh Token not valid'
-            : (error as any)?.message || 'Internal Server Error'
-          res.status(httpStatus.INTERNAL_SERVER_ERROR).send(message)
+          next(error)
         }
       },
     },

@@ -18,33 +18,29 @@ export const authorize: (config: OperationConfig) => Endpoint[] = config => {
       path: '/oauth/authorize',
       method: 'post',
       async handler(req, res, next) {
-        try {
-          const { method: requestedMethod } = req.body as {
-            method?: string
-          }
-
-          const method = requestedMethod || 'credentials'
-
-          const authHandlers = { ...handlers, ...config.authorization?.customHandlers }
-
-          const methodIsSupported = Object.keys(authHandlers).includes(method)
-
-          if (!methodIsSupported) {
-            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Invalid authorization method')
-            return
-          }
-
-          const authHandler = authHandlers[method as keyof typeof authHandlers]
-
-          if (!authHandler) {
-            res.status(httpStatus.BAD_REQUEST).send('Bad Request: Invalid authorization method')
-            return
-          }
-
-          return authHandler(config)(req, res, next)
-        } catch (error) {
-          next(error)
+        const { method: requestedMethod } = req.body as {
+          method?: string
         }
+
+        const method = requestedMethod || 'credentials'
+
+        const authHandlers = { ...handlers, ...config.authorization?.customHandlers }
+
+        const methodIsSupported = Object.keys(authHandlers).includes(method)
+
+        if (!methodIsSupported) {
+          res.status(httpStatus.BAD_REQUEST).send('Bad Request: Invalid authorization method')
+          return
+        }
+
+        const authHandler = authHandlers[method as keyof typeof authHandlers]
+
+        if (!authHandler) {
+          res.status(httpStatus.BAD_REQUEST).send('Bad Request: Invalid authorization method')
+          return
+        }
+
+        authHandler(config)(req, res, next)
       },
     },
   ]

@@ -39,7 +39,7 @@ export const logout: (config: OperationConfig) => Endpoint[] = config => {
           res.send({
             message: 'Logged out',
           })
-        } catch (error) {
+        } catch (error: unknown) {
           next(error)
         }
       },

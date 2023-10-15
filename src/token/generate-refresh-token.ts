@@ -11,7 +11,18 @@ interface RefreshTokenProps {
   config: OperationConfig
 }
 
-export default async function generateRefreshToken({ app, req, user, config }: RefreshTokenProps) {
+interface RefreshTokenResult {
+  refreshToken: string
+  sessionId: string
+  expiresIn: number
+}
+
+export default async function generateRefreshToken({
+  app,
+  req,
+  user,
+  config,
+}: RefreshTokenProps): Promise<RefreshTokenResult | null> {
   const { payload } = req
   const { endpointCollection: collection, sessions } = config
   const { refreshTokenExpiration, limit } = sessions || {}
@@ -33,7 +44,7 @@ export default async function generateRefreshToken({ app, req, user, config }: R
       if (detectedIp) ipInfo = await ipinfoWrapper.lookupIp(detectedIp)
 
       location = ipInfo
-    } catch (error) {
+    } catch (error: unknown) {
       payload.logger.error(error)
     }
   }

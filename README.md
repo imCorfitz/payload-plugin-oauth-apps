@@ -85,7 +85,7 @@ export default buildConfig({
   - `user`: Information about the user to be authenticated
   - `client`: Details about the OAuth App making the auth request
 
-  > Note: `customHandlers` should be set if you wish to create your own `method` and allows you to perform the entire authentication flow yourself. Note that the plugin does expose the generateAccessToken and generateRefreshToken methods, however this goes beyond the scope of this documentation, and should be used in advance cases only.
+  > Note: `customHandlers` should be set if you wish to create your own `method` and allows you to perform the entire authentication flow yourself. Note that the plugin does expose the generateAccessToken and generateRefreshToken methods, however this goes beyond the scope of this documentation, and should be used in advanced cases only.
 
 - `sessions`: object | optional
 

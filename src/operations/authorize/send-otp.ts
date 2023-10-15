@@ -19,7 +19,7 @@ export interface Arguments {
 }
 
 async function sendOtp(incomingArgs: Arguments): Promise<void> {
-  let args = incomingArgs
+  const args = incomingArgs
 
   const {
     collection: { config: collectionConfig },
@@ -39,7 +39,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<void> {
 
     const email = unsanitizedEmail.toLowerCase().trim()
 
-    let user = await payload.db.findOne<any>({
+    let user = await payload.db.findOne<GenericUser>({
       collection: collectionConfig.slug,
       req,
       where: { email: { equals: email.toLowerCase() } },
@@ -49,7 +49,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<void> {
       throw new AuthenticationError(req.t)
     }
 
-    if (user && isLocked(user.lockUntil)) {
+    if (user && isLocked(Number(user.lockUntil))) {
       throw new LockedAuth(req.t)
     }
 
@@ -122,7 +122,7 @@ async function sendOtp(incomingArgs: Arguments): Promise<void> {
       }
     }
 
-    void sendEmail({
+    sendEmail({
       from: `"${emailOptions.fromName}" <${emailOptions.fromAddress}>`,
       to: email,
       subject,

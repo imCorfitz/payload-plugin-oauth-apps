@@ -1,7 +1,7 @@
 module.exports = {
   overrides: [
     {
-      files: ["src/**/*.ts", "src/**/*.tsx"],
+      files: ["src/**/*.{ts,tsx,js,jsx}", "dev/**/*.{ts,tsx,js,jsx}"],
       options: {
         printWidth: 100,
         parser: "typescript",

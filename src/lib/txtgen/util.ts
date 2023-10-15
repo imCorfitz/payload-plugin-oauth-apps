@@ -4,21 +4,21 @@ import { adjectives, nouns, vowels } from './sample'
 
 let random: () => number
 
-export const setRandom = (newRandom: () => number) => {
+export const setRandom = (newRandom: () => number): void => {
   random = newRandom
 }
 
 setRandom(Math.random)
 
-export const randfloat = () => random()
+export const randfloat = (): number => random()
 
-export const randint = (min: number, max: number) => {
+export const randint = (min: number, max: number): number => {
   const offset = min
   const range = max - min + 1
   return Math.floor(randfloat() * range) + offset
 }
 
-export const rand = (a: string[]) => {
+export const rand = (a: string[]): string => {
   let w
   while (!w) {
     w = a[randint(0, a.length - 1)]
@@ -26,12 +26,13 @@ export const rand = (a: string[]) => {
   return w
 }
 
-export const pickLastPunc = () => {
+export const pickLastPunc = (): string => {
   const a = '.......!?!?;...'.split('')
   return rand(a)
 }
 
-export const pluralize = (word: string) => {
+export const pluralize = (w: string): string => {
+  let word = w
   if (word.endsWith('s')) {
     return word
   }
@@ -41,10 +42,10 @@ export const pluralize = (word: string) => {
     word = word.slice(0, word.length - 1)
     word += 'ie'
   }
-  return word + 's'
+  return `${word}s`
 }
 
-export const normalize = (word: string) => {
+export const normalize = (word: string): string => {
   let a = 'a'
   if (word.match(/^(a|e|heir|herb|hour|i|o)/)) {
     a = 'an'

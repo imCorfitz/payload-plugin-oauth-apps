@@ -11,7 +11,7 @@ import type { Collection, PayloadRequest } from 'payload/types'
 
 import generateAccessToken from '../../token/generate-access-token'
 import generateRefreshToken from '../../token/generate-refresh-token'
-import type { OAuthApp, OperationConfig } from '../../types'
+import type { GenericUser, OAuthApp, OperationConfig } from '../../types'
 
 export interface Result {
   exp?: number
@@ -33,9 +33,10 @@ export interface Arguments {
 }
 
 async function login(incomingArgs: Arguments): Promise<Result> {
-  let args = incomingArgs
+  const args = incomingArgs
 
   const {
+    collection,
     collection: { config: collectionConfig },
     req,
     req: { payload },
@@ -51,7 +52,7 @@ async function login(incomingArgs: Arguments): Promise<Result> {
 
     const email = unsanitizedEmail.toLowerCase().trim()
 
-    let user = await payload.db.findOne<any>({
+    let user = await payload.db.findOne<GenericUser>({
       collection: collectionConfig.slug,
       req,
       where: { email: { equals: email.toLowerCase() } },
@@ -61,7 +62,7 @@ async function login(incomingArgs: Arguments): Promise<Result> {
       throw new AuthenticationError(req.t)
     }
 
-    if (user && isLocked(user.lockUntil)) {
+    if (user && isLocked(Number(user.lockUntil))) {
       throw new LockedAuth(req.t)
     }
 
@@ -86,9 +87,7 @@ async function login(incomingArgs: Arguments): Promise<Result> {
 
     if (maxLoginAttemptsEnabled) {
       await unlock({
-        collection: {
-          config: collectionConfig,
-        },
+        collection,
         data: {
           email,
         },
