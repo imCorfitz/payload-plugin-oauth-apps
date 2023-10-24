@@ -7,3 +7,4 @@
 - [ ] Write more documentation
 - [ ] Test support for vite bundler and Postgres DB adapter
 - [ ] Write tests
+- [ ] Separate auth flow to separate API?
