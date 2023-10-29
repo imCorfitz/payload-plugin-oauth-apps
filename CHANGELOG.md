@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- d35fa80: added npmignore and more tests
+
 ## 0.3.0
 
 ### Minor Changes
