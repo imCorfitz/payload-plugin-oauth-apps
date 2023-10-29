@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.2
+
+### Patch Changes
+
+- 771f271: Fixing missing hooks in collection config
+- 771f271: Fixing token naming convention for refresh endpoint
+
 ## 0.3.1
 
 ### Patch Changes
