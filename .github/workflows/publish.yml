@@ -1,5 +1,4 @@
-name: Publish New Version
-
+name: Publish
 on:
   workflow_run:
     workflows: ["Test"]
@@ -10,17 +9,24 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  build:
+  publish:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          node-version: "16.x"
-          registry-url: "https://registry.npmjs.org"
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
       - run: yarn install
       - run: cd dev && yarn install
       - run: yarn test
+
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
