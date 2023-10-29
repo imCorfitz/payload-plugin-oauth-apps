@@ -84,8 +84,8 @@ export const refreshToken: (config: OperationConfig) => Endpoint[] = config => {
           })
 
           res.send({
-            accessToken,
-            accessExpiration: expiresIn,
+            token: accessToken,
+            exp: expiresIn,
           })
         } catch (error: unknown) {
           next(error)

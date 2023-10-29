@@ -60,6 +60,7 @@ export const oAuthApps =
            * Add OAuth hooks to the users collection
            */
           collection.hooks = {
+            ...(collection.hooks || {}),
             beforeOperation: [
               ...(collection.hooks?.beforeOperation || []),
               beforeRefreshOperationHook(endpointConfig),
