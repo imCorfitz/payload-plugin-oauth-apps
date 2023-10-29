@@ -20,7 +20,7 @@ export const start = async (args: { local: boolean } = { local: false }): Promis
   const { local } = args
   await payload.init({
     local,
-    secret: process.env.PAYLOAD_SECRET || 'here-is-a-secret',
+    secret: process.env.PAYLOAD_SECRET || 'this-is-a-secret',
     express: app,
   })
 
