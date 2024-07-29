@@ -1,5 +1,8 @@
 # OAuth Apps plugin for Payload CMS
 
+> [!WARNING]
+> This project is no longer maintained.
+
 <a href="LICENSE">
   <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="Software License" />
 </a>
@@ -9,8 +12,6 @@
 <a href="https://npmjs.org/package/@imcorfitz/payload-plugin-oauth-apps">
   <img src="https://img.shields.io/npm/v/@imcorfitz/payload-plugin-oauth-apps.svg" alt="NPM" />
 </a>
-
-> Please note this plugin is under active development. It should `NOT` be considered production ready. A lot `WILL` change. Please see [TODO](TODO.md)
 
 ## Features
 
